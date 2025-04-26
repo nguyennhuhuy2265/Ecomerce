@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Ecommerce" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <item name="android:statusBarColor">@color/white</item> <!-- Màu nền Status Bar -->
+        <item name="android:background">#FFFFFF</item> <!-- Màu nền của cửa sổ -->
+
+    </style>
+
+    <style name="Theme.Ecommerce" parent="Base.Theme.Ecommerce" />
+</resources>
