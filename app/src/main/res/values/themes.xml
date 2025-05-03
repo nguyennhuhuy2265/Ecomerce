@@ -4,7 +4,8 @@
 
         <item name="android:statusBarColor">@color/white</item> <!-- Màu nền Status Bar -->
         <item name="android:background">#FFFFFF</item> <!-- Màu nền của cửa sổ -->
-
+        <!-- Không dùng item background mặc định -->
+        <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView.Colored</item>
     </style>
 
     <style name="Theme.Ecommerce" parent="Base.Theme.Ecommerce" />

@@ -26,6 +26,5 @@
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
 
-    <!-- Đường viền / line -->
-    <color name="divider">#BDBDBD</color>
+
 </resources>

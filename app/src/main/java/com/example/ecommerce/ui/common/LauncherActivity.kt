@@ -21,7 +21,7 @@ class LauncherActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
 //            checkLoginStatus()
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, UserMainActivity::class.java))
             finish()
         }, 1000) // Delay 1s để show splash nhẹ, có thể bỏ nếu không cần
     }
