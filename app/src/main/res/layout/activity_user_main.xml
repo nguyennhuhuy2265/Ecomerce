@@ -9,7 +9,7 @@
 
 
     <include
-        android:id="@+id/userTopBar"
+        android:id="@+id/topBarUser"
         layout="@layout/topbar_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userTopBar"/>
+        app:layout_constraintTop_toBottomOf="@+id/topBarUser"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

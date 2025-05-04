@@ -24,9 +24,8 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="8dp"
+            android:layout_marginStart="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +37,7 @@
                 <ImageView
                     android:id="@+id/imgSearch"
                     android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/ic_search"
                     app:tint="@color/gray_dark" />
@@ -54,15 +53,17 @@
                     android:inputType="text"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:textColor="#212121"
-                    android:textColorHint="#9E9E9E"
-                    android:textSize="14sp" />
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:focusable="false"
+                    android:clickable="true"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <!-- Nút giỏ hàng -->
         <FrameLayout
-            android:id="@+id/layoutCart"
+            android:id="@+id/flCart"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp">
@@ -72,7 +73,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:contentDescription="Giỏ hàng"
                 android:src="@drawable/ic_cart"
                 app:tint="@color/primary_dark" />
 
@@ -95,22 +95,21 @@
 
         <!-- Nút tin nhắn -->
         <FrameLayout
-            android:id="@+id/layoutMessage"
+            android:id="@+id/flChat"
             android:layout_width="48dp"
             android:layout_height="48dp">
 
             <ImageView
-                android:id="@+id/imgMessage"
+                android:id="@+id/imgChat"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:contentDescription="Tin nhắn"
                 android:src="@drawable/ic_chat"
                 app:tint="@color/primary_dark" />
 
             <!-- Badge số lượng tin nhắn mới -->
             <TextView
-                android:id="@+id/tvMessageBadge"
+                android:id="@+id/tvChatBadge"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="top|end"

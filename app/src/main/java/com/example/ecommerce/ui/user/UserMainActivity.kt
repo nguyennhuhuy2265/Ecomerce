@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
@@ -58,31 +59,21 @@ class UserMainActivity : AppCompatActivity() {
     }
 
     private fun setupTopBar() {
-        // Thiết lập xử lý tìm kiếm
-        binding.userTopBar.etSearch.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val searchText = v.text.toString().trim()
-                if (searchText.isNotEmpty()) {
-                    Toast.makeText(this, "Đang tìm kiếm: $searchText", Toast.LENGTH_SHORT).show()
-                    // TODO: Xử lý tìm kiếm
-                }
-                true
-            } else {
-                false
-            }
+        // Khi click vào thanh tìm kiếm
+        binding.topBarUser.etSearch.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        // Thiết lập sự kiện click cho giỏ hàng
-        binding.userTopBar.layoutCart.setOnClickListener {
-            Toast.makeText(this, "Đang mở giỏ hàng", Toast.LENGTH_SHORT).show()
-            // TODO: Mở màn hình giỏ hàng
+// Khi click giỏ hàng
+        binding.topBarUser.flCart.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
         }
 
-        // Thiết lập sự kiện click cho tin nhắn
-        binding.userTopBar.layoutMessage.setOnClickListener {
-            Toast.makeText(this, "Đang mở tin nhắn", Toast.LENGTH_SHORT).show()
-            // TODO: Mở màn hình tin nhắn
+// Khi click tin nhắn
+        binding.topBarUser.flChat.setOnClickListener {
+            startActivity(Intent(this, ChatActivity::class.java))
         }
+
 
         // Demo hiển thị badge
         updateCartBadge(7)
@@ -91,7 +82,7 @@ class UserMainActivity : AppCompatActivity() {
 
     // Cập nhật số lượng sản phẩm trong giỏ hàng
     private fun updateCartBadge(count: Int) {
-        binding.userTopBar.tvCartBadge.apply {
+        binding.topBarUser.tvCartBadge.apply {
             text = count.toString()
             isVisible = count > 0
         }
@@ -99,7 +90,7 @@ class UserMainActivity : AppCompatActivity() {
 
     // Cập nhật số lượng tin nhắn mới
     private fun updateMessageBadge(count: Int) {
-        binding.userTopBar.tvMessageBadge.apply {
+        binding.topBarUser.tvChatBadge.apply {
             text = count.toString()
             isVisible = count > 0
         }

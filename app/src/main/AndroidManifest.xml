@@ -34,6 +34,18 @@
             android:name=".ui.user.UserMainActivity"
             android:exported="true"/>
 
+        <activity
+            android:name=".ui.user.SearchActivity"
+            android:exported="true"/>
+
+        <activity
+            android:name=".ui.user.CartActivity"
+            android:exported="true"/>
+
+        <activity
+            android:name=".ui.user.ChatActivity"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ecommerce.R
+import com.example.ecommerce.data.DemoProductGenerator
 import com.example.ecommerce.ui.user.UserMainActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -24,6 +25,9 @@ class LauncherActivity : AppCompatActivity() {
             startActivity(Intent(this, UserMainActivity::class.java))
             finish()
         }, 1000) // Delay 1s để show splash nhẹ, có thể bỏ nếu không cần
+
+
+
     }
 
     private fun checkLoginStatus() {
