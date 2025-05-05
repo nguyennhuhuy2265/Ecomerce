@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="180dp"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardCornerRadius="6dp"
@@ -57,16 +57,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <!-- Giá gốc -->
-                <TextView
-                    android:id="@+id/tvOriginalPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="₫199.000"
-                    android:textColor="#9E9E9E"
-                    android:textSize="11sp"
-                    android:layout_gravity="center_vertical" />
             </LinearLayout>
 
             <!-- Đánh giá và đã bán -->
@@ -96,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="6dp"
-                    android:text="•"
+                    android:text=" "
                     android:textSize="11sp"
                     android:textColor="#757575" />
 

@@ -2,17 +2,15 @@ package com.example.ecommerce.ui.user
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.example.ecommerce.AccountFragment
 import com.example.ecommerce.CategoryFragment
-import com.example.ecommerce.HomeFragment
 import com.example.ecommerce.NotificationFragment
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.ActivityUserMainBinding
+import com.example.ecommerce.ui.HomeFragment
 import com.example.ecommerce.viewmodel.user.UserMainViewModel
 
 class UserMainActivity : AppCompatActivity() {
@@ -56,6 +54,11 @@ class UserMainActivity : AppCompatActivity() {
                 .replace(R.id.flFragment, fragment)
                 .commit()
         }
+
+        // Đặt tab mặc định
+        if (savedInstanceState == null) {
+            viewModel.selectTab(UserMainViewModel.Tab.HOME)
+        }
     }
 
     private fun setupTopBar() {
@@ -64,16 +67,15 @@ class UserMainActivity : AppCompatActivity() {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-// Khi click giỏ hàng
+        // Khi click giỏ hàng
         binding.topBarUser.flCart.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
         }
 
-// Khi click tin nhắn
+        // Khi click tin nhắn
         binding.topBarUser.flChat.setOnClickListener {
             startActivity(Intent(this, ChatActivity::class.java))
         }
-
 
         // Demo hiển thị badge
         updateCartBadge(7)
@@ -93,6 +95,15 @@ class UserMainActivity : AppCompatActivity() {
         binding.topBarUser.tvChatBadge.apply {
             text = count.toString()
             isVisible = count > 0
+        }
+    }
+
+    override fun onBackPressed() {
+        // Kiểm tra nếu có Fragment trong back stack thì pop
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
         }
     }
 }
