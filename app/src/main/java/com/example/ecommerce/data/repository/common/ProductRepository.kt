@@ -3,46 +3,14 @@ package com.example.ecommerce.repository
 import android.util.Log
 import com.example.ecommerce.model.common.Address
 import com.example.ecommerce.model.common.Product
-import com.example.ecommerce.model.common.User
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 
 class ProductRepository {
     private val db = FirebaseFirestore.getInstance()
     private var lastVisible: DocumentSnapshot? = null
     private val pageSize = 10
     private val TAG = "ProductRepository"
-
-    fun getProductsByIds(productIds: List<String>, callback: (List<Product>) -> Unit) {
-        if (productIds.isEmpty()) {
-            Log.d(TAG, "getProductsByIds: Product IDs is empty")
-            callback(emptyList())
-            return
-        }
-        Log.d(TAG, "getProductsByIds: Fetching products with IDs: $productIds")
-        db.collection("products")
-            .whereIn("id", productIds)
-            .get()
-            .addOnSuccessListener { result ->
-                val productList = result.documents.mapNotNull { doc ->
-                    try {
-                        doc.toObject(Product::class.java)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "getProductsByIds: Error mapping product ${doc.id}: $e")
-                        null
-                    }
-                }
-                Log.d(TAG, "getProductsByIds: Fetched ${productList.size} products: $productList")
-                fetchSellerLocations(productList) { updatedProducts ->
-                    callback(updatedProducts)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "getProductsByIds: Error fetching products", exception)
-                callback(emptyList())
-            }
-    }
 
     fun getProducts(categoryId: String? = null, isInitialLoad: Boolean, callback: (List<Product>, Boolean) -> Unit) {
         Log.d(TAG, "getProducts: Starting with categoryId = $categoryId, isInitialLoad = $isInitialLoad")

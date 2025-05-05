@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.FragmentUserHomeBinding
-import com.example.ecommerce.model.common.Banner
 import com.example.ecommerce.model.common.Product
 import com.example.ecommerce.ui.user.viewmodel.HomeViewModel
 
@@ -39,13 +37,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        binding.rvRecommendedProducts.layoutManager = LinearLayoutManager(
-            requireContext(), LinearLayoutManager.HORIZONTAL, false
-        )
-        binding.rvRecommendedProducts.setHasFixedSize(true)
-        binding.rvRecommendedProducts.adapter = ProductAdapter(emptyList()) { product ->
-            navigateToProductDetail(product)
-        }
 
         binding.rvFeaturedProducts.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvFeaturedProducts.setHasFixedSize(true)
@@ -70,10 +61,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.recommendedProducts.observe(viewLifecycleOwner) { products ->
-            (binding.rvRecommendedProducts.adapter as ProductAdapter).updateProducts(products)
-        }
-
         viewModel.featuredProducts.observe(viewLifecycleOwner) { products ->
             featuredAdapter.updateProducts(products)
             isLoading = false
@@ -89,7 +76,6 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.fetchBanners()
-        viewModel.fetchRecommendedProducts()
         viewModel.fetchFeaturedProducts()
     }
 
