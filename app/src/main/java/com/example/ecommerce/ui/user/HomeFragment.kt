@@ -1,29 +1,36 @@
 package com.example.ecommerce.ui
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import androidx.viewpager2.widget.ViewPager2
 import com.example.ecommerce.R
+import com.example.ecommerce.adapter.BannerAdapter
+import com.example.ecommerce.adapter.ProductAdapter
 import com.example.ecommerce.databinding.FragmentUserHomeBinding
 import com.example.ecommerce.model.common.Product
-import com.example.ecommerce.ui.user.viewmodel.HomeViewModel
-
+import com.example.ecommerce.ui.component.GridSpacingItemDecoration
+import com.example.ecommerce.ui.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentUserHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
+    private lateinit var bannerAdapter: BannerAdapter
     private lateinit var featuredAdapter: ProductAdapter
-    private var isLoading = false
+    private val bannerHandler = Handler(Looper.getMainLooper())
+    private val TAG = "HomeFragment"
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUserHomeBinding.inflate(inflater, container, false)
@@ -32,51 +39,67 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerViews()
-        setupObservers()
+        setupRecyclerView()
+        setupBanner()
+        setupScrollListener()
+        observeData()
+        viewModel.fetchBanners()
+        viewModel.fetchFeaturedProducts()
     }
 
-    private fun setupRecyclerViews() {
-
-        binding.rvFeaturedProducts.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.rvFeaturedProducts.setHasFixedSize(true)
+    private fun setupRecyclerView() {
         featuredAdapter = ProductAdapter(emptyList()) { product ->
             navigateToProductDetail(product)
         }
-        binding.rvFeaturedProducts.adapter = featuredAdapter
-
-        binding.rvFeaturedProducts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
-                if (!isLoading && totalItemCount <= (lastVisibleItem + 2) && viewModel.hasMoreData.value == true) {
-                    isLoading = true
-                    viewModel.loadMoreFeaturedProducts()
-                }
-            }
-        })
+        binding.rvFeaturedProducts.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = featuredAdapter
+            setHasFixedSize(true)
+            val spacingInPixels = 16
+            addItemDecoration(GridSpacingItemDecoration(2, spacingInPixels, true))
+        }
     }
 
-    private fun setupObservers() {
-        viewModel.featuredProducts.observe(viewLifecycleOwner) { products ->
-            featuredAdapter.updateProducts(products)
-            isLoading = false
+    private fun setupBanner() {
+        bannerAdapter = BannerAdapter(emptyList())
+        binding.vpBanner.apply {
+            adapter = bannerAdapter
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
-
-        viewModel.banners.observe(viewLifecycleOwner) { banners ->
-            if (banners.isNotEmpty()) {
-                val banner = banners.first()
-                Glide.with(this)
-                    .load(banner.imageUrl)
-                    .into(binding.ivBanner)
+        val bannerRunnable = object : Runnable {
+            override fun run() {
+                if (_binding != null && bannerAdapter.itemCount > 0) {
+                    val currentItem = binding.vpBanner.currentItem
+                    val nextItem = if (currentItem == bannerAdapter.itemCount - 1) 0 else currentItem + 1
+                    binding.vpBanner.currentItem = nextItem
+                    bannerHandler.postDelayed(this, 3000)
+                }
             }
         }
+        bannerHandler.postDelayed(bannerRunnable, 3000)
+    }
 
-        viewModel.fetchBanners()
-        viewModel.fetchFeaturedProducts()
+    private fun setupScrollListener() {
+        binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val contentView = binding.nestedScrollView.getChildAt(0)
+            val totalHeight = contentView.height
+            val scrollViewHeight = binding.nestedScrollView.height
+            Log.d(TAG, "onScroll: scrollY=$scrollY, totalHeight=$totalHeight, scrollViewHeight=$scrollViewHeight, hasMoreData=${viewModel.hasMoreData.value}")
+            if (scrollY + scrollViewHeight >= totalHeight - 500 && viewModel.hasMoreData.value == true) {
+                Log.d(TAG, "Loading more products triggered")
+                viewModel.loadMoreFeaturedProducts()
+            }
+        }
+    }
+
+    private fun observeData() {
+        viewModel.banners.observe(viewLifecycleOwner) { banners ->
+            bannerAdapter.updateBanners(banners)
+        }
+        viewModel.featuredProducts.observe(viewLifecycleOwner) { products ->
+            Log.d(TAG, "observeData: Updated products, total=${products.size}")
+            featuredAdapter.updateProducts(products)
+        }
     }
 
     private fun navigateToProductDetail(product: Product) {
@@ -85,7 +108,6 @@ class HomeFragment : Fragment() {
             putParcelable("product", product)
         }
         fragment.arguments = bundle
-
         parentFragmentManager.beginTransaction()
             .replace(R.id.flFragment, fragment)
             .addToBackStack(null)
@@ -94,6 +116,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        bannerHandler.removeCallbacksAndMessages(null)
         _binding = null
     }
 }

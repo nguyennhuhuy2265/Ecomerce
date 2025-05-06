@@ -10,11 +10,10 @@ data class Address(
 )
 
 data class User(
-    val id: String = "", // DocumentID tự động hoặc uid từ Firebase Auth
     val email: String = "",
     val name: String = "",
     val role: String = "user", // "user" hoặc "seller"
-    val address: Address? = null, // Sử dụng Address thay cho String?
+    val address: Address? = null,
     val avatarUrl: String? = null,
     val shopCategory: String? = null, // Chỉ có nếu role = "seller"
     val shopName: String? = null, // Chỉ có nếu role = "seller"

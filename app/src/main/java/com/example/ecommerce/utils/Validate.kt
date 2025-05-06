@@ -31,42 +31,40 @@ class Validate {
         confirmPassword: String,
         role: String,
         shopName: String,
-        category: String,
+        category: String?,
         emailField: EditText,
         passwordField: EditText,
         confirmPasswordField: EditText,
         shopNameField: EditText,
         categoryField: Spinner
-    ): Boolean {
-        // Validate cơ bản
-        if (!validateInput(email, password, emailField, passwordField)) return false
+    ): List<String> {
+        val errors = mutableListOf<String>()
 
-        if (confirmPassword.isEmpty()) {
-            confirmPasswordField.error = "Vui lòng xác nhận mật khẩu"
-            return false
+        // Validate cơ bản
+        if (!validateInput(email, password, emailField, passwordField)) {
+            errors.add("Vui lòng kiểm tra email và mật khẩu")
         }
 
-        if (password != confirmPassword) {
+        if (confirmPassword.isEmpty()) {
+            errors.add("Vui lòng xác nhận mật khẩu")
+            confirmPasswordField.error = "Vui lòng xác nhận mật khẩu"
+        } else if (password != confirmPassword) {
+            errors.add("Mật khẩu xác nhận không khớp")
             confirmPasswordField.error = "Mật khẩu xác nhận không khớp"
-            return false
         }
 
         // Nếu là seller thì phải nhập tên shop và ngành hàng
         if (role == "seller") {
-            if (shopName.isNullOrEmpty()) {
-                shopNameField?.error = "Tên cửa hàng không được để trống"
-                return false
+            if (shopName.isEmpty()) {
+                errors.add("Tên cửa hàng không được để trống")
+                shopNameField.error = "Tên cửa hàng không được để trống"
             }
-
             if (category.isNullOrEmpty()) {
-                categoryField?.performClick()
-                return false
+                errors.add("Vui lòng chọn ngành hàng kinh doanh")
+                categoryField.requestFocus()
             }
         }
 
-        return true
+        return errors
     }
-
-
-
 }

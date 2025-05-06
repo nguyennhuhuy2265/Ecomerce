@@ -35,6 +35,10 @@
             android:exported="true"/>
 
         <activity
+            android:name=".ui.seller.SellerMainActivity"
+            android:exported="true"/>
+
+        <activity
             android:name=".ui.user.SearchActivity"
             android:exported="true"/>
 

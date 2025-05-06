@@ -5,8 +5,6 @@ data class Category(
     val name: String = "",
     val description: String? = null,
     val imageUrl: String? = null,
-    val isActive: Boolean = true,
-    val parentCategoryId: String? = null,
     val priority: Int = 0,
     val createdAt: com.google.firebase.Timestamp? = null,
     val updatedAt: com.google.firebase.Timestamp? = null

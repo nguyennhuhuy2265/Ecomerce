@@ -4,15 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ecommerce.GenerateDataDemo
 import com.example.ecommerce.R
+import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class LauncherActivity : AppCompatActivity() {
-
     private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
+    private val TAG = "LauncherActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,34 +29,44 @@ class LauncherActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         Handler(Looper.getMainLooper()).postDelayed({
-//            checkLoginStatus()
-            startActivity(Intent(this, UserMainActivity::class.java))
-            finish()
-        }, 1000) // Delay 1s để show splash nhẹ, có thể bỏ nếu không cần
+            checkLoginStatus()
+//            startActivity(Intent(this, LoginActivity::class.java))
+        }, 1000) // Delay 1s để show splash nhẹ
 
-
-
-
+//        GenerateDataDemo().generateDemoData()
     }
 
     private fun checkLoginStatus() {
-//        val currentUser = auth.currentUser
-//        if (currentUser != null) {
-//            // Giả sử bạn đã lưu role vào Room hoặc SharedPref sau đăng nhập
-//            val role = getRoleLocally() // "user" hoặc "seller"
-//            if (role == "seller") {
-//                startActivity(Intent(this, SellerMainActivity::class.java))
-//            } else {
-//                startActivity(Intent(this, UserMainActivity::class.java))
-//            }
-//        } else {
-//            startActivity(Intent(this, LoginActivity::class.java))
-//        }
-//        finish()
-    }
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Lấy role từ Firestore
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val userId = currentUser.uid
+                    val userDoc = db.collection("users")
+                        .document(userId)
+                        .get()
+                        .await()
+                    val role = userDoc.getString("role") ?: "user" // Mặc định là "user" nếu không tìm thấy role
+                    Log.d(TAG, "User role: $role")
 
-    private fun getRoleLocally(): String {
-        // Lấy từ Room, DataStore, hoặc SharedPreferences
-        return "user" // Tạm cứng để test
+                    // Điều hướng dựa trên role
+                    if (role == "seller") {
+                        startActivity(Intent(this@LauncherActivity, SellerMainActivity::class.java))
+                    } else if (role == "user") {
+                        startActivity(Intent(this@LauncherActivity, UserMainActivity::class.java))
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to fetch user role: $e")
+                    // Nếu có lỗi (ví dụ: không có mạng), điều hướng mặc định tới LoginActivity
+                    startActivity(Intent(this@LauncherActivity, LoginActivity::class.java))
+                } finally {
+                    finish()
+                }
+            }
+        } else {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
     }
 }

@@ -6,140 +6,140 @@ import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.ActivityRegisterBinding
+import com.example.ecommerce.model.common.Category
+import com.example.ecommerce.model.common.User
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.user.UserMainActivity
 import com.example.ecommerce.utils.PasswordVisibility
 import com.example.ecommerce.utils.Validate
+import com.example.ecommerce.viewmodel.auth.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private var loadingHandler = LoadingHandler(supportFragmentManager)
+    private val authViewModel: AuthViewModel by viewModels()
+    private lateinit var loadingHandler: LoadingHandler
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
-
-    private val categoryList = listOf("Thời trang", "Điện tử", "Gia dụng", "Sách", "Thực phẩm", "Mỹ phẩm", "Khác...")
+    private val TAG = "RegisterActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-
-        setupCategorySpinner()
-
-        binding.roleGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (checkedId == binding.rbSeller.id) {
-                binding.sellerInfoLayout.visibility = View.VISIBLE
-                binding.llSocialRegister.visibility = View.GONE
-                binding.tvOr.visibility = View.GONE
-            } else {
-                binding.sellerInfoLayout.visibility = View.GONE
-                binding.llSocialRegister.visibility = View.VISIBLE
-                binding.tvOr.visibility = View.VISIBLE
-            }
-        }
-        var passwordVisibility = PasswordVisibility(binding.etPassword, binding.ivTogglePassword)
-        binding.ivTogglePassword.setOnClickListener {
-            passwordVisibility.toggle()
-        }
-        var confirmPasswordVisibility = PasswordVisibility(binding.etConfirmPassword, binding.ivToggleCofirmPassword)
-        binding.ivToggleCofirmPassword.setOnClickListener {
-            confirmPasswordVisibility.toggle()
-        }
-
-        binding.btnSignUp.setOnClickListener {
-            val email = binding.etEmail.text.toString().trim()
-            val password = binding.etPassword.text.toString().trim()
-            val confirmPassword = binding.etConfirmPassword.text.toString().trim()
-            val role = if (binding.rbSeller.isChecked) "seller" else "user"
-            val shopName = binding.etShopName.text.toString().trim()
-            val category = binding.spCategory.selectedItem.toString()
-
-            var validate = Validate()
-            if (validate.validateRegister(email, password, confirmPassword, role, shopName, category, binding.etEmail, binding.etPassword, binding.etConfirmPassword, binding.etShopName, binding.spCategory)) {
-                loadingHandler.showLoading()
-                registerUser(email, password, role, shopName, category)
-                Log.d("RegisterActivity", role + shopName + category)
-                loadingHandler.hideLoading()
-            }
-        }
-
-        //Trở về trang đăng nhập
-        binding.tvSignIn.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-
+        loadingHandler = LoadingHandler(supportFragmentManager)
+        setupTogglePassword()
+        setupListeners()
         setupGoogleLogin()
+        setupObservers()
     }
 
-
-
-    private fun setupCategorySpinner() {
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryList)
+    private fun setupCategorySpinner(categories: List<Category>) {
+        val categoryNames = categories.map { it.name }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCategory.adapter = adapter
     }
 
+    private fun setupTogglePassword() {
+        val passwordVisibility = PasswordVisibility(binding.etPassword, binding.ivTogglePassword)
+        binding.ivTogglePassword.setOnClickListener { passwordVisibility.toggle() }
 
+        val confirmPasswordVisibility = PasswordVisibility(binding.etConfirmPassword, binding.ivToggleCofirmPassword)
+        binding.ivToggleCofirmPassword.setOnClickListener { confirmPasswordVisibility.toggle() }
+    }
 
+    private fun setupListeners() {
+        binding.roleGroup.setOnCheckedChangeListener { _, checkedId ->
+            val isSeller = checkedId == binding.rbSeller.id
+            binding.sellerInfoLayout.visibility = if (isSeller) View.VISIBLE else View.GONE
+            binding.llSocialRegister.visibility = if (!isSeller) View.VISIBLE else View.GONE
+            binding.tvOr.visibility = if (!isSeller) View.VISIBLE else View.GONE
+        }
 
-    private fun registerUser(
-        email: String,
-        password: String,
-        role: String,
-        shopName: String,
-        category: String
-    ) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                Toast.makeText(this,"Đăng ký thành công",Toast.LENGTH_SHORT).show()
+        binding.btnSignUp.setOnClickListener { handleSignUp() }
+        binding.tvSignIn.setOnClickListener { startActivity(Intent(this, LoginActivity::class.java)) }
+    }
+
+    private fun setupObservers() {
+        authViewModel.categories.observe(this, Observer { categories ->
+            if (categories.isNotEmpty()) {
+                setupCategorySpinner(categories)
+            } else {
+                Toast.makeText(this, "Không có danh mục nào để hiển thị", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        authViewModel.categoriesError.observe(this, Observer { error ->
+            if (error != null) {
+                Toast.makeText(this, "Lỗi khi lấy danh mục: $error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        authViewModel.registerSuccess.observe(this, Observer { user ->
+            loadingHandler.hideLoading()
+            if (user != null) {
+                Toast.makeText(this, "Đăng ký thành công với vai trò ${user.role}", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, LoginActivity::class.java))
-//                val userId = auth.currentUser?.uid ?: return@addOnSuccessListener
-//                val userMap = hashMapOf(
-//                    "email" to email,
-//                    "role" to role,
-//                    "createdAt" to System.currentTimeMillis()
-//                )
-//                if (role == "seller") {
-//                    userMap["shopName"] = shopName
-//                    userMap["category"] = category
-//                }
-//
-//                firestore.collection("users")
-//                    .document(userId)
-//                    .set(userMap)
-//                    .addOnSuccessListener {
-//                        showToast("Đăng ký thành công với vai trò $role")
-//                        finish() // hoặc chuyển sang màn hình đăng nhập
-//                    }
-//                    .addOnFailureListener {
-//                        showToast("Lưu thông tin thất bại: ${it.localizedMessage}")
-//                    }
+                finish()
             }
-            .addOnFailureListener {
-                showToast("Lỗi đăng ký: ${it.localizedMessage}")
+        })
+
+        authViewModel.registerError.observe(this, Observer { error ->
+            loadingHandler.hideLoading()
+            if (error != null) {
+                Toast.makeText(this, "Đăng ký thất bại: $error", Toast.LENGTH_SHORT).show()
             }
+        })
+
+        authViewModel.loginSuccess.observe(this, Observer { user ->
+            loadingHandler.hideLoading()
+            if (user != null) {
+                Toast.makeText(this, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, UserMainActivity::class.java))
+                finish()
+            }
+        })
+
+        authViewModel.loginError.observe(this, Observer { error ->
+            loadingHandler.hideLoading()
+            if (error != null) {
+                Toast.makeText(this, "Đăng nhập Google thất bại: $error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
-    private fun showToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun handleSignUp() {
+        val email = binding.etEmail.text.toString().trim()
+        val password = binding.etPassword.text.toString().trim()
+        val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+        val role = if (binding.rbSeller.isChecked) "seller" else "user"
+        val shopName = binding.etShopName.text.toString().trim()
+        val category = binding.spCategory.selectedItem?.toString()
+
+        val validate = Validate()
+        val errorMessages = validate.validateRegister(
+            email, password, confirmPassword, role, shopName, category,
+            binding.etEmail, binding.etPassword, binding.etConfirmPassword,
+            binding.etShopName, binding.spCategory
+        )
+
+        if (errorMessages.isNotEmpty()) {
+            Toast.makeText(this, errorMessages.joinToString("\n"), Toast.LENGTH_LONG).show()
+        } else {
+            loadingHandler.showLoading()
+            authViewModel.registerWithEmail(email, password, role, if (role == "seller") shopName else null, if (role == "seller") category else null)
+        }
     }
-
-
 
     private fun setupGoogleLogin() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -147,42 +147,27 @@ class RegisterActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         binding.btnGoogleRegister.setOnClickListener {
+            loadingHandler.showLoading()
             googleSignInClient.signOut().addOnCompleteListener {
-                loadingHandler.showLoading()
                 val signInIntent = googleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }
-            loadingHandler.hideLoading()
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            if (task.isSuccessful) {
-                val account = task.result
-                firebaseAuthWithGoogle(account.idToken!!)
-            } else {
-                Toast.makeText(this, "Đăng nhập Google thất bại", Toast.LENGTH_SHORT).show()
+            task.addOnSuccessListener { account ->
+                val idToken = account.idToken ?: return@addOnSuccessListener
+                authViewModel.signInWithGoogle(idToken)
+            }.addOnFailureListener {
+                loadingHandler.hideLoading()
+                Toast.makeText(this, "Đăng nhập Google thất bại: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         }
     }
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    Toast.makeText(this, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(this, UserMainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(this, "Firebase Auth thất bại", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
 }

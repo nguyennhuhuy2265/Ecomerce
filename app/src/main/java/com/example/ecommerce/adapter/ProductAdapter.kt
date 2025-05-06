@@ -1,4 +1,4 @@
-package com.example.ecommerce.ui
+package com.example.ecommerce.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,6 +12,7 @@ class ProductAdapter(
     private val onProductClick: (Product) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
+    // ViewHolder cho sản phẩm
     class ProductViewHolder(
         private val binding: ItemProductBinding,
         private val onProductClick: (Product) -> Unit
@@ -22,24 +23,17 @@ class ProductAdapter(
             binding.tvRating.text = "${product.avgRating}"
             binding.tvSold.text = "Đã bán ${product.soldCount}"
             binding.tvShopLocation.text = product.shopLocation ?: "Không xác định"
-
-            Glide.with(binding.ivProductImage.context)
-                .load(product.defaultImageUrl ?: product.imageUrls.firstOrNull())
-                .into(binding.ivProductImage)
-
-            binding.root.setOnClickListener {
-                onProductClick(product)
+            // Load ảnh sản phẩm bằng Glide
+                Glide.with(binding.ivProductImage.context)
+                    .load(product.defaultImageUrl)
+                    .into(binding.ivProductImage)
+            binding.root.setOnClickListener { onProductClick(product)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val binding = ItemProductBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        val parentWidth = parent.measuredWidth
-        val itemWidth = parentWidth / 2
-        binding.root.layoutParams = RecyclerView.LayoutParams(itemWidth, RecyclerView.LayoutParams.WRAP_CONTENT)
+        val binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductViewHolder(binding, onProductClick)
     }
 
@@ -49,6 +43,7 @@ class ProductAdapter(
 
     override fun getItemCount(): Int = products.size
 
+    // Cập nhật danh sách sản phẩm
     fun updateProducts(newProducts: List<Product>) {
         products = newProducts
         notifyDataSetChanged()

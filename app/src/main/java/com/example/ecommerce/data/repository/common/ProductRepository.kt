@@ -1,7 +1,6 @@
-package com.example.ecommerce.repository
+package com.example.ecommerce.data.repository
 
 import android.util.Log
-import com.example.ecommerce.model.common.Address
 import com.example.ecommerce.model.common.Product
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,97 +11,45 @@ class ProductRepository {
     private val pageSize = 10
     private val TAG = "ProductRepository"
 
-    fun getProducts(categoryId: String? = null, isInitialLoad: Boolean, callback: (List<Product>, Boolean) -> Unit) {
-        Log.d(TAG, "getProducts: Starting with categoryId = $categoryId, isInitialLoad = $isInitialLoad")
+    fun getProducts(isInitialLoad: Boolean, callback: (List<Product>, Boolean, DocumentSnapshot?) -> Unit) {
         var query = db.collection("products")
             .orderBy("name")
             .limit(pageSize.toLong())
-
-        if (categoryId != null) {
-            Log.d(TAG, "getProducts: Filtering by categoryId = $categoryId")
-            query = query.whereEqualTo("categoryId", categoryId)
-        }
 
         if (isInitialLoad) {
             lastVisible = null
         }
 
         val finalQuery = if (lastVisible != null) {
+            Log.d(TAG, "getProducts: Loading more with lastVisible=$lastVisible")
             query.startAfter(lastVisible)
         } else {
+            Log.d(TAG, "getProducts: Initial load")
             query
         }
 
-        Log.d(TAG, "getProducts: Executing query: $finalQuery")
         finalQuery.get()
             .addOnSuccessListener { result ->
-                Log.d(TAG, "getProducts: Raw result size: ${result.size()}")
-                val productList = result.documents.mapNotNull { doc ->
+                val products = result.documents.mapNotNull { doc ->
                     try {
-                        doc.toObject(Product::class.java)
+                        val product = doc.toObject(Product::class.java)
+                        if (product == null) {
+                            Log.w(TAG, "Failed to map document ${doc.id}")
+                        }
+                        product
                     } catch (e: Exception) {
-                        Log.e(TAG, "getProducts: Error mapping product ${doc.id}: $e")
+                        Log.e(TAG, "Error mapping document ${doc.id}: $e")
                         null
                     }
                 }
-                if (result.isEmpty) {
-                    Log.d(TAG, "getProducts: No products found for query: categoryId = $categoryId")
-                    callback(emptyList(), false)
-                    return@addOnSuccessListener
-                }
-                Log.d(TAG, "getProducts: Fetched ${productList.size} products: $productList")
                 lastVisible = result.documents.lastOrNull()
-                fetchSellerLocations(productList) { updatedProducts ->
-                    callback(updatedProducts, true)
-                }
+                val hasMore = products.isNotEmpty() && lastVisible != null
+                Log.d(TAG, "getProducts: Fetched ${products.size} products, hasMore=$hasMore, lastVisible=$lastVisible")
+                callback(products, hasMore, lastVisible)
             }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "getProducts: Error fetching products", exception)
-                callback(emptyList(), false)
-            }
-    }
-
-    private fun fetchSellerLocations(products: List<Product>, callback: (List<Product>) -> Unit) {
-        val sellerIds = products.mapNotNull { it.sellerId }.distinct()
-        if (sellerIds.isEmpty()) {
-            Log.d(TAG, "fetchSellerLocations: No seller IDs found")
-            callback(products)
-            return
-        }
-
-        Log.d(TAG, "fetchSellerLocations: Fetching users with IDs: $sellerIds")
-        db.collection("users")
-            .whereIn("id", sellerIds)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val sellerMap = snapshot.documents
-                    .filter { doc -> doc.getString("role") == "seller" }
-                    .associate { doc ->
-                        val addressField = doc.get("address")
-                        val addressString = when (addressField) {
-                            is String -> {
-                                // Nếu address là chuỗi, giả định chỉ có tỉnh/thành phố
-                                addressField
-                            }
-                            is Map<*, *> -> {
-                                // Ánh xạ Map thành UserAddress và chỉ lấy city
-                                val address = doc.get("address", Address::class.java)
-                                address?.city ?: "Không xác định"
-                            }
-                            else -> "Không xác định"
-                        }
-                        doc.id to addressString
-                    }
-                Log.d(TAG, "fetchSellerLocations: Seller map: $sellerMap")
-                val updatedProducts = products.map { product ->
-                    product.copy(shopLocation = sellerMap[product.sellerId] ?: product.shopLocation)
-                }
-                Log.d(TAG, "fetchSellerLocations: Updated products: $updatedProducts")
-                callback(updatedProducts)
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "fetchSellerLocations: Error fetching users", exception)
-                callback(products)
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error fetching products: $e")
+                callback(emptyList(), false, null)
             }
     }
 }
