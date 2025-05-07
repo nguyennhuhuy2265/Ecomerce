@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ecommerce.data.repository.commo.UserRepository
-import com.example.ecommerce.data.repository.common.CategoryRepository
+import com.example.ecommerce.repository.common.CategoryRepository
 import com.example.ecommerce.model.common.Category
 import com.example.ecommerce.model.common.User
+import com.example.ecommerce.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {

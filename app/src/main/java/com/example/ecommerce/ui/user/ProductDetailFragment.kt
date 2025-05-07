@@ -1,4 +1,4 @@
-package com.example.ecommerce.ui
+package com.example.ecommerce.ui.user
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,13 +15,14 @@ import com.example.ecommerce.databinding.FragmentProductDetailUserBinding
 import com.example.ecommerce.model.common.OptionGroup
 import com.example.ecommerce.model.common.OptionValue
 import com.example.ecommerce.model.common.Product
+import com.example.ecommerce.repository.CloudinaryRepository
 
 class ProductDetailFragment : Fragment() {
     private var _binding: FragmentProductDetailUserBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var product: Product
-    private val selectedOptions = mutableMapOf<String, OptionValue>() // Lưu lựa chọn của người dùng
+    private val selectedOptions = mutableMapOf<String, OptionValue>()
+    private val cloudinaryRepository = CloudinaryRepository(requireContext())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,8 +51,15 @@ class ProductDetailFragment : Fragment() {
         binding.tvPrice.text = "₫${product.price}"
         binding.tvDescription.text = product.description
         binding.tvShopLocation.text = product.shopLocation ?: "Không xác định"
+        val imageUrl = product.default_image_public_id?.let {
+            cloudinaryRepository.getImageUrl(it, 400, 400, "fill")
+        } ?: (product.image_public_ids.firstOrNull()?.let {
+            cloudinaryRepository.getImageUrl(it, 400, 400, "fill")
+        } ?: "")
         Glide.with(this)
-            .load(product.defaultImageUrl ?: product.imageUrls.firstOrNull())
+            .load(imageUrl)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+            .error(android.R.drawable.ic_menu_report_image)
             .into(binding.ivProductImage)
     }
 
@@ -60,7 +68,6 @@ class ProductDetailFragment : Fragment() {
         llOptionGroups.removeAllViews()
 
         product.optionGroups.sortedBy { it.priority }.forEach { optionGroup ->
-            // Tạo tiêu đề cho OptionGroup
             val tvGroupTitle = TextView(requireContext()).apply {
                 text = optionGroup.name
                 textSize = 16f
@@ -74,7 +81,6 @@ class ProductDetailFragment : Fragment() {
             }
             llOptionGroups.addView(tvGroupTitle)
 
-            // Tạo RadioGroup để chứa các tùy chọn
             val radioGroup = RadioGroup(requireContext()).apply {
                 orientation = RadioGroup.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -83,7 +89,6 @@ class ProductDetailFragment : Fragment() {
                 )
             }
 
-            // Tạo RadioButton cho từng OptionValue
             optionGroup.values.forEachIndexed { index, optionValue ->
                 val radioButton = RadioButton(requireContext()).apply {
                     text = if (optionValue.extraPrice > 0) {
@@ -102,13 +107,11 @@ class ProductDetailFragment : Fragment() {
                 }
                 radioGroup.addView(radioButton)
 
-                // Nếu là mặc định, chọn sẵn giá trị
                 if (optionValue.isDefault) {
                     selectedOptions[optionGroup.id] = optionValue
                 }
             }
 
-            // Xử lý khi người dùng chọn một tùy chọn
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
                 val selectedValue = selectedRadioButton.tag as OptionValue
@@ -121,7 +124,6 @@ class ProductDetailFragment : Fragment() {
 
     private fun setupAddToCartButton() {
         binding.btnAddToCart.setOnClickListener {
-            // Kiểm tra xem tất cả OptionGroup bắt buộc đã được chọn chưa
             val missingRequiredGroups = product.optionGroups.filter { group ->
                 group.isRequired && !selectedOptions.containsKey(group.id)
             }
@@ -136,19 +138,16 @@ class ProductDetailFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Tính tổng giá sau khi chọn các tùy chọn
             val basePrice = product.price
             val extraPrice = selectedOptions.values.sumOf { it.extraPrice }
             val totalPrice = basePrice + extraPrice
 
-            // Lưu vào giỏ hàng (giả định, bạn có thể thay bằng logic thực tế)
             Toast.makeText(
                 requireContext(),
                 "Đã thêm vào giỏ hàng: ${product.name} - Tổng: ₫$totalPrice",
                 Toast.LENGTH_SHORT
             ).show()
 
-            // Quay lại màn trước
             parentFragmentManager.popBackStack()
         }
     }

@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ecommerce.data.repository.ProductRepository
+import androidx.lifecycle.viewModelScope
 import com.example.ecommerce.model.common.Banner
 import com.example.ecommerce.model.common.Product
+import com.example.ecommerce.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
@@ -35,22 +37,35 @@ class HomeViewModel : ViewModel() {
     }
 
     fun fetchFeaturedProducts() {
-        repository.getProducts(isInitialLoad = true) { products, hasMore, _ ->
-            Log.d(TAG, "fetchFeaturedProducts: Fetched ${products.size} products, hasMore=$hasMore")
-            _featuredProducts.value = products
-            _hasMoreData.value = hasMore
+        viewModelScope.launch {
+            val result = repository.getProducts(isInitialLoad = true)
+            result.onSuccess { (products, hasMore) ->
+                Log.d(TAG, "fetchFeaturedProducts: Fetched ${products.size} products, hasMore=$hasMore")
+                _featuredProducts.value = products
+                _hasMoreData.value = hasMore
+            }.onFailure { e ->
+                Log.e(TAG, "fetchFeaturedProducts: Error fetching products: $e")
+                _featuredProducts.value = emptyList()
+                _hasMoreData.value = false
+            }
         }
     }
 
     fun loadMoreFeaturedProducts() {
         if (_hasMoreData.value == true) {
             Log.d(TAG, "loadMoreFeaturedProducts: Attempting to load more")
-            repository.getProducts(isInitialLoad = false) { products, hasMore, _ ->
-                val currentList = _featuredProducts.value.orEmpty()
-                val newList = currentList + products
-                Log.d(TAG, "loadMoreFeaturedProducts: Added ${products.size} products, total=${newList.size}, hasMore=$hasMore")
-                _featuredProducts.value = newList
-                _hasMoreData.value = hasMore
+            viewModelScope.launch {
+                val result = repository.getProducts(isInitialLoad = false)
+                result.onSuccess { (products, hasMore) ->
+                    val currentList = _featuredProducts.value.orEmpty()
+                    val newList = currentList + products
+                    Log.d(TAG, "loadMoreFeaturedProducts: Added ${products.size} products, total=${newList.size}, hasMore=$hasMore")
+                    _featuredProducts.value = newList
+                    _hasMoreData.value = hasMore
+                }.onFailure { e ->
+                    Log.e(TAG, "loadMoreFeaturedProducts: Error loading more products: $e")
+                    _hasMoreData.value = false
+                }
             }
         } else {
             Log.d(TAG, "loadMoreFeaturedProducts: No more data to load, hasMoreData=${_hasMoreData.value}")

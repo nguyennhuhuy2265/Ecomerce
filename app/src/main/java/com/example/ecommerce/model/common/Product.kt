@@ -17,8 +17,8 @@ data class Product(
     val soldCount: Int = 0,
     val avgRating: Double = 0.0,
     val reviewCount: Int = 0,
-    val imageUrls: List<String> = listOf(),
-    val defaultImageUrl: String? = null,
+    val image_public_ids: List<String> = listOf(), // Thay imageUrls bằng danh sách public_ids
+    val default_image_public_id: String? = null, // Thay defaultImageUrl bằng public_id
     val optionGroups: List<OptionGroup> = emptyList(),
     val shopLocation: String? = null,
     val createdAt: com.google.firebase.Timestamp? = null,

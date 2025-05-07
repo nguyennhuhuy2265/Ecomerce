@@ -6,17 +6,16 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
+        android:id="@+id/ivShopBanner"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:scaleType="centerCrop" />
 
     <Button
-        android:id="@+id/btnChangeAvatar"
+        android:id="@+id/btnUploadBanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Change Avatar" />
+        android:text="Upload Shop Banner" />
 
 </LinearLayout>

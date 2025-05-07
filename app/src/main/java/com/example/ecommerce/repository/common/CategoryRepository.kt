@@ -1,4 +1,4 @@
-package com.example.ecommerce.data.repository.common
+package com.example.ecommerce.repository.common
 
 import android.util.Log
 import com.example.ecommerce.model.common.Category

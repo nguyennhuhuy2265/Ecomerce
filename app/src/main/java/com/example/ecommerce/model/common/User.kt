@@ -14,7 +14,7 @@ data class User(
     val name: String = "",
     val role: String = "user", // "user" hoặc "seller"
     val address: Address? = null,
-    val avatarUrl: String? = null,
+    val avatar_public_id: String? = null, // Thay avatarUrl bằng public_id
     val shopCategory: String? = null, // Chỉ có nếu role = "seller"
     val shopName: String? = null, // Chỉ có nếu role = "seller"
     val recommendedProductIds: List<String> = emptyList(), // Chỉ có nếu role = "user"
@@ -24,7 +24,7 @@ data class User(
     val reviewCount: Int = 0, // Chỉ có nếu role = "seller"
     val isVerified: Boolean = false, // Chỉ có nếu role = "seller"
     val businessHours: Map<String, String> = emptyMap(), // Chỉ có nếu role = "seller"
-    val bannerUrl: String? = null, // Chỉ có nếu role = "seller"
+    val banner_public_id: String? = null, // Thay bannerUrl bằng public_id (cho seller)
     val followersCount: Int = 0, // Chỉ có nếu role = "seller"
     val createdAt: com.google.firebase.Timestamp? = null,
     val updatedAt: com.google.firebase.Timestamp? = null

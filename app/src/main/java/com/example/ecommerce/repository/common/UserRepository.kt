@@ -1,4 +1,4 @@
-package com.example.ecommerce.data.repository.commo
+package com.example.ecommerce.repository
 
 import android.util.Log
 import com.example.ecommerce.model.common.User
@@ -70,6 +70,34 @@ class UserRepository {
             Result.success(user)
         } catch (e: Exception) {
             Log.e(TAG, "Google sign-in failed: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateAvatar(userId: String, avatarPublicId: String): Result<Unit> {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .update("avatar_public_id", avatarPublicId)
+                .await()
+            Log.d(TAG, "Avatar updated successfully for user: $userId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update avatar: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateBanner(userId: String, bannerPublicId: String): Result<Unit> {
+        return try {
+            db.collection("users")
+                .document(userId)
+                .update("banner_public_id", bannerPublicId)
+                .await()
+            Log.d(TAG, "Banner updated successfully for user: $userId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update banner: $e")
             Result.failure(e)
         }
     }

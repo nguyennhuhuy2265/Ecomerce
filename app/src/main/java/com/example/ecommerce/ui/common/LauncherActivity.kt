@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ecommerce.GenerateDataDemo
 import com.example.ecommerce.R
 import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
@@ -29,11 +28,9 @@ class LauncherActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            checkLoginStatus()
-//            startActivity(Intent(this, LoginActivity::class.java))
+//            checkLoginStatus()
+      startActivity(Intent(this, LoginActivity::class.java))
         }, 1000) // Delay 1s để show splash nhẹ
-
-//        GenerateDataDemo().generateDemoData()
     }
 
     private fun checkLoginStatus() {

@@ -1,4 +1,4 @@
-package com.example.ecommerce.ui
+package com.example.ecommerce.ui.user
 
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +16,7 @@ import com.example.ecommerce.adapter.BannerAdapter
 import com.example.ecommerce.adapter.ProductAdapter
 import com.example.ecommerce.databinding.FragmentUserHomeBinding
 import com.example.ecommerce.model.common.Product
+import com.example.ecommerce.repository.CloudinaryRepository
 import com.example.ecommerce.ui.component.GridSpacingItemDecoration
 import com.example.ecommerce.ui.viewmodel.HomeViewModel
 
@@ -25,6 +26,7 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var bannerAdapter: BannerAdapter
     private lateinit var featuredAdapter: ProductAdapter
+    private lateinit var cloudinaryRepository: CloudinaryRepository
     private val bannerHandler = Handler(Looper.getMainLooper())
     private val TAG = "HomeFragment"
 
@@ -39,6 +41,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        cloudinaryRepository = CloudinaryRepository(requireContext())
         setupRecyclerView()
         setupBanner()
         setupScrollListener()
@@ -48,9 +51,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        featuredAdapter = ProductAdapter(emptyList()) { product ->
-            navigateToProductDetail(product)
-        }
+        featuredAdapter = ProductAdapter(
+            emptyList(),
+            { product -> navigateToProductDetail(product) },
+            cloudinaryRepository
+        )
         binding.rvFeaturedProducts.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = featuredAdapter
@@ -61,7 +66,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupBanner() {
-        bannerAdapter = BannerAdapter(emptyList())
+        bannerAdapter = BannerAdapter(emptyList(), cloudinaryRepository)
         binding.vpBanner.apply {
             adapter = bannerAdapter
             orientation = ViewPager2.ORIENTATION_HORIZONTAL

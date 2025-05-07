@@ -10,7 +10,6 @@ import com.example.ecommerce.CategoryFragment
 import com.example.ecommerce.NotificationFragment
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.ActivityUserMainBinding
-import com.example.ecommerce.ui.HomeFragment
 import com.example.ecommerce.viewmodel.user.UserMainViewModel
 
 class UserMainActivity : AppCompatActivity() {
@@ -18,23 +17,13 @@ class UserMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserMainBinding
     private val viewModel: UserMainViewModel by viewModels()
 
-    // Tạo các Fragment sẵn
-    private val fragments = mapOf(
-        UserMainViewModel.Tab.HOME to HomeFragment(),
-        UserMainViewModel.Tab.CATEGORY to CategoryFragment(),
-        UserMainViewModel.Tab.NOTIFICATION to NotificationFragment(),
-        UserMainViewModel.Tab.ACCOUNT to AccountFragment()
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Thiết lập TopBar
         setupTopBar()
 
-        // 1. Khi người dùng chọn tab ở bottom nav
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             val tab = when (item.itemId) {
                 R.id.nav_home -> UserMainViewModel.Tab.HOME
@@ -47,42 +36,40 @@ class UserMainActivity : AppCompatActivity() {
             true
         }
 
-        // 2. Quan sát tab thay đổi và đổi Fragment
         viewModel.selectedTab.observe(this) { tab ->
-            val fragment = fragments[tab] ?: return@observe
+            val fragment = when (tab) {
+                UserMainViewModel.Tab.HOME -> HomeFragment()
+                UserMainViewModel.Tab.CATEGORY -> CategoryFragment()
+                UserMainViewModel.Tab.NOTIFICATION -> NotificationFragment()
+                UserMainViewModel.Tab.ACCOUNT -> AccountFragment()
+            }
             supportFragmentManager.beginTransaction()
                 .replace(R.id.flFragment, fragment)
                 .commit()
         }
 
-        // Đặt tab mặc định
         if (savedInstanceState == null) {
             viewModel.selectTab(UserMainViewModel.Tab.HOME)
         }
     }
 
     private fun setupTopBar() {
-        // Khi click vào thanh tìm kiếm
         binding.topBarUser.etSearch.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        // Khi click giỏ hàng
         binding.topBarUser.flCart.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
         }
 
-        // Khi click tin nhắn
         binding.topBarUser.flChat.setOnClickListener {
             startActivity(Intent(this, ChatActivity::class.java))
         }
 
-        // Demo hiển thị badge
         updateCartBadge(7)
         updateMessageBadge(5)
     }
 
-    // Cập nhật số lượng sản phẩm trong giỏ hàng
     private fun updateCartBadge(count: Int) {
         binding.topBarUser.tvCartBadge.apply {
             text = count.toString()
@@ -90,7 +77,6 @@ class UserMainActivity : AppCompatActivity() {
         }
     }
 
-    // Cập nhật số lượng tin nhắn mới
     private fun updateMessageBadge(count: Int) {
         binding.topBarUser.tvChatBadge.apply {
             text = count.toString()
@@ -99,7 +85,6 @@ class UserMainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        // Kiểm tra nếu có Fragment trong back stack thì pop
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {

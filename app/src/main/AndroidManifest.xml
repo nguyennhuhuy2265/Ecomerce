@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Khai báo phiên bản SDK -->
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="33"
+        android:compileSdkVersion="33" />
+
+    <!-- Quyền truy cập Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Quyền truy cập bộ nhớ (cho Android 9 trở xuống) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Quyền truy cập ảnh (cho Android 13 trở lên) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
     <application
+        android:name=".data.remote.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,8 +28,8 @@
         android:theme="@style/Theme.Ecommerce"
         tools:targetApi="31">
 
-
-        <activity android:name=".ui.common.LauncherActivity"
+        <activity
+            android:name=".ui.common.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,30 +39,31 @@
 
         <activity
             android:name=".ui.common.LoginActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
-        <activity android:name=".ui.common.RegisterActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".ui.common.RegisterActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.user.UserMainActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
         <activity
             android:name=".ui.seller.SellerMainActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
         <activity
             android:name=".ui.user.SearchActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
         <activity
             android:name=".ui.user.CartActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
         <activity
             android:name=".ui.user.ChatActivity"
-            android:exported="true"/>
+            android:exported="false" />
 
     </application>
 

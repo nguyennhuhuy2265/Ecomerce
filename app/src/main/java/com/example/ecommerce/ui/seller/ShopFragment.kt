@@ -1,4 +1,4 @@
-package com.example.ecommerce
+package com.example.ecommerce.ui.seller
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.example.ecommerce.databinding.FragmentUserAccountBinding
+import com.example.ecommerce.databinding.FragmentSellerShopBinding
 import com.example.ecommerce.repository.UserRepository
 import com.example.ecommerce.viewmodel.common.MediaViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -20,19 +20,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AccountFragment : Fragment() {
-    private var _binding: FragmentUserAccountBinding? = null
+class ShopFragment : Fragment() {
+    private var _binding: FragmentSellerShopBinding? = null
     private val binding get() = _binding!!
     private val mediaViewModel: MediaViewModel by viewModels()
     private val auth = FirebaseAuth.getInstance()
 
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val pickBannerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
                 val filePath = getPathFromUri(uri)
                 filePath?.let {
                     val userId = auth.currentUser?.uid ?: return@let
-                    mediaViewModel.uploadImage(it, "avatars/$userId")
+                    mediaViewModel.uploadImage(it, "banners/seller_$userId")
                 }
             }
         }
@@ -42,7 +42,7 @@ class AccountFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentUserAccountBinding.inflate(inflater, container, false)
+        _binding = FragmentSellerShopBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,13 +51,13 @@ class AccountFragment : Fragment() {
 
         setupListeners()
         setupObservers()
-        loadCurrentAvatar()
+        loadShopBanner()
     }
 
     private fun setupListeners() {
-        binding.btnChangeAvatar.setOnClickListener {
+        binding.btnUploadBanner.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            pickImageLauncher.launch(intent)
+            pickBannerLauncher.launch(intent)
         }
     }
 
@@ -67,11 +67,11 @@ class AccountFragment : Fragment() {
                 val userId = auth.currentUser?.uid ?: return@onSuccess
                 CoroutineScope(Dispatchers.Main).launch {
                     val repo = UserRepository()
-                    repo.updateAvatar(userId, "avatars/$userId").onSuccess {
-                        Toast.makeText(context, "Avatar updated successfully", Toast.LENGTH_SHORT).show()
-                        loadCurrentAvatar()
+                    repo.updateBanner(userId, "banners/seller_$userId").onSuccess {
+                        Toast.makeText(context, "Banner updated successfully", Toast.LENGTH_SHORT).show()
+                        loadShopBanner()
                     }.onFailure { e ->
-                        Toast.makeText(context, "Failed to update avatar: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to update banner: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }.onFailure { e ->
@@ -80,14 +80,14 @@ class AccountFragment : Fragment() {
         }
     }
 
-    private fun loadCurrentAvatar() {
+    private fun loadShopBanner() {
         val userId = auth.currentUser?.uid ?: return
-        val avatarUrl = mediaViewModel.getImageUrl("avatars/$userId", 100, 100, "thumb")
+        val bannerUrl = mediaViewModel.getImageUrl("banners/seller_$userId", 800, 200, "fill")
         Glide.with(this)
-            .load(avatarUrl)
+            .load(bannerUrl)
             .placeholder(android.R.drawable.ic_menu_gallery)
             .error(android.R.drawable.ic_menu_report_image)
-            .into(binding.ivAvatar)
+            .into(binding.ivShopBanner)
     }
 
     private fun getPathFromUri(uri: android.net.Uri): String? {

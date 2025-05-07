@@ -4,16 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.ecommerce.repository.CloudinaryRepository
 import com.example.ecommerce.databinding.ItemBannerBinding
 import com.example.ecommerce.model.common.Banner
 
-class BannerAdapter(private var banners: List<Banner>) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
+class BannerAdapter(
+    private var banners: List<Banner>,
+    private val cloudinaryRepository: CloudinaryRepository
+) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
-    // ViewHolder cho banner
     class BannerViewHolder(private val binding: ItemBannerBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(banner: Banner) {
-            // Load ảnh banner bằng Glide
-            Glide.with(binding.ivBanner.context).load(banner.imageUrl).into(binding.ivBanner)
+        fun bind(banner: Banner, cloudinaryRepository: CloudinaryRepository) {
+            val imageUrl = banner.image_public_id.let {
+                cloudinaryRepository.getImageUrl(it, 800, 200, "fill")
+            }
+            Glide.with(binding.ivBanner.context)
+                .load(imageUrl)
+                .into(binding.ivBanner)
         }
     }
 
@@ -23,12 +30,11 @@ class BannerAdapter(private var banners: List<Banner>) : RecyclerView.Adapter<Ba
     }
 
     override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
-        holder.bind(banners[position])
+        holder.bind(banners[position], cloudinaryRepository)
     }
 
     override fun getItemCount(): Int = banners.size
 
-    // Cập nhật danh sách banner
     fun updateBanners(newBanners: List<Banner>) {
         banners = newBanners
         notifyDataSetChanged()
