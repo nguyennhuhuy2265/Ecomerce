@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.ecommerce.repository.CloudinaryRepository
 import com.example.ecommerce.databinding.ItemBannerBinding
 import com.example.ecommerce.model.Banner
 
@@ -17,16 +15,14 @@ class BannerAdapter(
         fun bind(banner: Banner) {
             Glide.with(binding.ivBanner.context)
                 .load(banner.imageUrl)
-                .thumbnail(0.25f) // Giảm kích thước hình ảnh trước khi tải
-                .override(800, 200) // Resize hình ảnh thành 800x200
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // Lưu trữ cache
+                .thumbnail(0.25f)
+                .override(800, 200)
                 .into(binding.ivBanner)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
-        val binding = ItemBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BannerViewHolder(binding)
+        return BannerViewHolder(ItemBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
@@ -41,7 +37,6 @@ class BannerAdapter(
     }
 
     override fun onViewRecycled(holder: BannerViewHolder) {
-        super.onViewRecycled(holder)
-        Glide.with(holder.itemView.context).clear(holder.itemView) // Xóa hình ảnh khi view được tái chế
+        Glide.with(holder.itemView.context).clear(holder.itemView)
     }
 }

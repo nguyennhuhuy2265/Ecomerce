@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide
 import com.example.ecommerce.databinding.FragmentProductDetailUserBinding
 import com.example.ecommerce.model.OptionValue
 import com.example.ecommerce.model.Product
-import com.example.ecommerce.repository.CloudinaryRepository
 
 class ProductDetailFragment : Fragment() {
     private var _binding: FragmentProductDetailUserBinding? = null
@@ -34,83 +33,67 @@ class ProductDetailFragment : Fragment() {
             parentFragmentManager.popBackStack()
             return
         }
-        displayProduct()
-        setupOptionGroups()
-        setupAddToCartButton()
-    }
 
-    private fun displayProduct() {
-        binding.tvProductName.text = product.name
-        binding.tvPrice.text = "₫${product.price}"
-        binding.tvDescription.text = product.description
-        binding.tvShopLocation.text = product.shopLocation ?: "Không xác định"
-        val imageUrl = product.defaultImageUrl ?: product.imageUrls.firstOrNull() ?: ""
-        Glide.with(this)
-            .load(imageUrl)
-            .into(binding.ivProductImage)
-    }
-
-    private fun setupOptionGroups() {
-        val llOptionGroups = binding.llOptionGroups
-        llOptionGroups.removeAllViews()
-
-        product.optionGroups.sortedBy { it.priority }.forEach { optionGroup ->
-            val tvGroupTitle = TextView(requireContext()).apply {
-                text = optionGroup.name
-                textSize = 16f
-                setTextColor(resources.getColor(android.R.color.black))
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { setMargins(0, 16, 0, 8) }
-            }
-            llOptionGroups.addView(tvGroupTitle)
-
-            val radioGroup = RadioGroup(requireContext()).apply {
-                orientation = RadioGroup.HORIZONTAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
-
-            optionGroup.values.forEachIndexed { index, optionValue ->
-                val radioButton = RadioButton(requireContext()).apply {
-                    text = if (optionValue.extraPrice > 0) "${optionValue.displayName} (+₫${optionValue.extraPrice})" else optionValue.displayName
-                    id = index
-                    tag = optionValue
-                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                    isChecked = optionValue.isDefault
-                }
-                radioGroup.addView(radioButton)
-
-                if (optionValue.isDefault) {
-                    selectedOptions[optionGroup.id] = optionValue
-                }
-            }
-
-            radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                val selectedRadioButton = radioGroup.findViewById<RadioButton>(checkedId)
-                selectedOptions[optionGroup.id] = selectedRadioButton.tag as OptionValue
-            }
-
-            llOptionGroups.addView(radioGroup)
+        // Hiển thị thông tin sản phẩm
+        with(binding) {
+            tvProductName.text = product.name
+            tvPrice.text = "₫${product.price}"
+            tvDescription.text = product.description
+            tvShopLocation.text = product.shopLocation ?: "Không xác định"
+            Glide.with(this@ProductDetailFragment)
+                .load(product.defaultImageUrl ?: product.imageUrls.firstOrNull() ?: "")
+                .into(ivProductImage)
         }
-    }
 
-    private fun setupAddToCartButton() {
-        binding.btnAddToCart.setOnClickListener {
-            val missingRequiredGroups = product.optionGroups.filter { group ->
-                group.isRequired && !selectedOptions.containsKey(group.id)
+        // Thiết lập các tùy chọn
+        binding.llOptionGroups.apply {
+            removeAllViews()
+            product.optionGroups.sortedBy { it.priority }.forEach { group ->
+                addView(TextView(requireContext()).apply {
+                    text = group.name
+                    textSize = 16f
+                    setTextColor(resources.getColor(android.R.color.black))
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { setMargins(0, 16, 0, 8) }
+                })
+
+                val radioGroup = RadioGroup(requireContext()).apply {
+                    orientation = RadioGroup.HORIZONTAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                group.values.forEachIndexed { index, value ->
+                    radioGroup.addView(RadioButton(requireContext()).apply {
+                        text = if (value.extraPrice > 0) "${value.displayName} (+₫${value.extraPrice})" else value.displayName
+                        id = index
+                        tag = value
+                        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                        isChecked = value.isDefault
+                        if (value.isDefault) selectedOptions[group.id] = value
+                    })
+                }
+
+                radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                    selectedOptions[group.id] = radioGroup.findViewById<RadioButton>(checkedId).tag as OptionValue
+                }
+                addView(radioGroup)
             }
-            if (missingRequiredGroups.isNotEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng chọn: ${missingRequiredGroups.joinToString { it.name }}", Toast.LENGTH_SHORT).show()
+        }
+
+        // Thêm vào giỏ hàng
+        binding.btnAddToCart.setOnClickListener {
+            val missingGroups = product.optionGroups.filter { it.isRequired && !selectedOptions.containsKey(it.id) }
+            if (missingGroups.isNotEmpty()) {
+                Toast.makeText(requireContext(), "Vui lòng chọn: ${missingGroups.joinToString { it.name }}", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val basePrice = product.price
-            val extraPrice = selectedOptions.values.sumOf { it.extraPrice }
-            val totalPrice = basePrice + extraPrice
+            val totalPrice = product.price + selectedOptions.values.sumOf { it.extraPrice }
             Toast.makeText(requireContext(), "Đã thêm vào giỏ hàng: ${product.name} - Tổng: ₫$totalPrice", Toast.LENGTH_SHORT).show()
             parentFragmentManager.popBackStack()
         }
