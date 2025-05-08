@@ -14,8 +14,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class CloudinaryRepository(private val context: Context) {
-    private val TAG = "CloudinaryRepository"
-
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetworkInfo
@@ -35,12 +33,10 @@ class CloudinaryRepository(private val context: Context) {
                     .callback(object : UploadCallback {
                         override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                             val url = resultData?.get("url").toString()
-                            Log.d(TAG, "Upload successful: $url")
                             continuation.resume(url)
                         }
 
                         override fun onError(requestId: String?, error: ErrorInfo?) {
-                            Log.e(TAG, "Upload failed: $error")
                             continuation.resumeWithException(Exception(error?.description))
                         }
 
@@ -52,26 +48,6 @@ class CloudinaryRepository(private val context: Context) {
             Result.success(imageUrl)
         } catch (e: Exception) {
             Result.failure(e)
-        }
-    }
-
-    fun getImageUrl(publicId: String, width: Int, height: Int, crop: String = "fill"): String {
-        if (publicId.isBlank()) {
-            Log.w(TAG, "getImageUrl: publicId is blank, returning empty string")
-            return ""
-        }
-        return try {
-            MediaManager.get().url()
-                .transformation(Transformation<Transformation<*>>()
-                    .width(width)
-                    .height(height)
-                    .crop(crop)
-                    .fetchFormat("auto")
-                    .quality("auto"))
-                .generate(publicId)
-        } catch (e: Exception) {
-            Log.e(TAG, "getImageUrl: Failed to generate URL for publicId=$publicId, error: $e")
-            ""
         }
     }
 }

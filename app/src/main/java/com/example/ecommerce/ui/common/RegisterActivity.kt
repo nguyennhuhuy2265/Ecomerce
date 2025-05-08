@@ -2,7 +2,6 @@ package com.example.ecommerce.ui.common
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -11,17 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.ActivityRegisterBinding
-import com.example.ecommerce.model.common.Category
-import com.example.ecommerce.model.common.User
+import com.example.ecommerce.model.Category
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.user.UserMainActivity
-import com.example.ecommerce.utils.PasswordVisibility
-import com.example.ecommerce.utils.Validate
+import com.example.ecommerce.ui.component.PasswordVisibility
+import com.example.ecommerce.ui.component.Validate
 import com.example.ecommerce.viewmodel.auth.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding

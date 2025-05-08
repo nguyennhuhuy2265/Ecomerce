@@ -1,47 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/etProductName"
+    <!-- Thanh tìm kiếm và thêm sản phẩm -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Product Name" />
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
 
-    <EditText
-        android:id="@+id/etDescription"
+        <EditText
+            android:id="@+id/et_search_product"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="Tìm kiếm sản phẩm"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/bg_search_input"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="8dp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btn_add_new_product"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="+ Thêm"
+            android:textAllCaps="false"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_primary_button"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <!-- Bộ lọc sản phẩm -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description" />
+        android:scrollbars="none">
 
-    <EditText
-        android:id="@+id/etCategory"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/filter_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tất cả"
+                android:padding="8dp"
+                android:background="@drawable/bg_filter_selected"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/filter_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang bán"
+                android:padding="8dp"
+                android:background="@drawable/bg_filter_normal"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/filter_out_of_stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hết hàng"
+                android:padding="8dp"
+                android:background="@drawable/bg_filter_normal"
+                android:layout_marginEnd="8dp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Số lượng sản phẩm và sắp xếp -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Category" />
+        android:orientation="horizontal"
+        android:padding="12dp">
 
-    <EditText
-        android:id="@+id/etPrice"
+        <TextView
+            android:id="@+id/tv_product_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="154 sản phẩm" />
+
+        <LinearLayout
+            android:id="@+id/layout_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_sort"
+                android:contentDescription="Sort" />
+
+            <TextView
+                android:id="@+id/tv_sort_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mới nhất"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Danh sách sản phẩm -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_products"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price"
-        android:inputType="number" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_user_product" />
 
-    <EditText
-        android:id="@+id/etStock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Stock"
-        android:inputType="number" />
-
-    <Button
-        android:id="@+id/btnUploadProductImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Upload Product Image" />
 
 </LinearLayout>

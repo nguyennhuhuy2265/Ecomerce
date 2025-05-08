@@ -11,8 +11,8 @@ import com.example.ecommerce.databinding.ActivityLoginBinding
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
-import com.example.ecommerce.utils.PasswordVisibility
-import com.example.ecommerce.utils.Validate
+import com.example.ecommerce.ui.component.PasswordVisibility
+import com.example.ecommerce.ui.component.Validate
 import com.example.ecommerce.viewmodel.auth.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient

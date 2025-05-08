@@ -16,6 +16,7 @@ class SellerMainActivity : AppCompatActivity() {
 
     // Tạo các Fragment sẵn
     private val fragments = mapOf(
+        SellerMainViewModel.Tab.DASHBOARD to DashboardFragment(),
         SellerMainViewModel.Tab.PRODUCT to ProductFragment(),
         SellerMainViewModel.Tab.ODER to OderFragment(),
         SellerMainViewModel.Tab.NOTIFICATION to NotificationFragment(),
@@ -33,11 +34,12 @@ class SellerMainActivity : AppCompatActivity() {
         // 1. Khi người dùng chọn tab ở bottom nav
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             val tab = when (item.itemId) {
+                R.id.nav_dashboard -> SellerMainViewModel.Tab.DASHBOARD
                 R.id.nav_product -> SellerMainViewModel.Tab.PRODUCT
-                R.id.nav_category -> SellerMainViewModel.Tab.ODER
+                R.id.nav_oder -> SellerMainViewModel.Tab.ODER
                 R.id.nav_notification -> SellerMainViewModel.Tab.NOTIFICATION
-                R.id.nav_account -> SellerMainViewModel.Tab.SHOP
-                else -> SellerMainViewModel.Tab.PRODUCT
+                R.id.nav_shop -> SellerMainViewModel.Tab.SHOP
+                else -> SellerMainViewModel.Tab.DASHBOARD
             }
             viewModel.selectTab(tab)
             true
@@ -53,7 +55,7 @@ class SellerMainActivity : AppCompatActivity() {
 
         // Đặt tab mặc định
         if (savedInstanceState == null) {
-            viewModel.selectTab(SellerMainViewModel.Tab.PRODUCT)
+            viewModel.selectTab(SellerMainViewModel.Tab.DASHBOARD)
         }
     }
 

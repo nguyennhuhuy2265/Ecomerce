@@ -5,12 +5,14 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import com.example.ecommerce.AccountFragment
 import com.example.ecommerce.CategoryFragment
 import com.example.ecommerce.NotificationFragment
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.ActivityUserMainBinding
 import com.example.ecommerce.viewmodel.user.UserMainViewModel
+
 
 class UserMainActivity : AppCompatActivity() {
 
@@ -44,7 +46,7 @@ class UserMainActivity : AppCompatActivity() {
                 UserMainViewModel.Tab.ACCOUNT -> AccountFragment()
             }
             supportFragmentManager.beginTransaction()
-                .replace(R.id.flFragment, fragment)
+                .replace(R.id.flFragment, fragment as Fragment)
                 .commit()
         }
 

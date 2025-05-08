@@ -1,4 +1,4 @@
-package com.example.ecommerce.data.remote
+package com.example.ecommerce.config
 
 import android.app.Application
 import com.cloudinary.android.MediaManager

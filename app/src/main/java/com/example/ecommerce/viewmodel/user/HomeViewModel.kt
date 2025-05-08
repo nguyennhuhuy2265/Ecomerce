@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ecommerce.model.common.Banner
-import com.example.ecommerce.model.common.Product
+import com.example.ecommerce.model.Banner
+import com.example.ecommerce.model.Product
 import com.example.ecommerce.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch

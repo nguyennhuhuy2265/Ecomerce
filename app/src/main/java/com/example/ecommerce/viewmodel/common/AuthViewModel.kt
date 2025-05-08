@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommerce.repository.common.CategoryRepository
-import com.example.ecommerce.model.common.Category
-import com.example.ecommerce.model.common.User
+import com.example.ecommerce.model.Category
+import com.example.ecommerce.model.User
 import com.example.ecommerce.repository.UserRepository
 import kotlinx.coroutines.launch
 

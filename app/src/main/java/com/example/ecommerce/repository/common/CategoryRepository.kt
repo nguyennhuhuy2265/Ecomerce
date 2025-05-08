@@ -1,7 +1,7 @@
 package com.example.ecommerce.repository.common
 
 import android.util.Log
-import com.example.ecommerce.model.common.Category
+import com.example.ecommerce.model.Category
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 

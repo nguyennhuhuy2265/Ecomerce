@@ -1,4 +1,4 @@
-package com.example.ecommerce.ui.common
+package com.example.ecommerce
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ecommerce.R
+import com.example.ecommerce.ui.common.LoginActivity
 import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,10 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class LauncherActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
-    private val TAG = "LauncherActivity"
+    private val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,14 +49,14 @@ class LauncherActivity : AppCompatActivity() {
 
                     // Điều hướng dựa trên role
                     if (role == "seller") {
-                        startActivity(Intent(this@LauncherActivity, SellerMainActivity::class.java))
+                        startActivity(Intent(this@MainActivity, SellerMainActivity::class.java))
                     } else if (role == "user") {
-                        startActivity(Intent(this@LauncherActivity, UserMainActivity::class.java))
+                        startActivity(Intent(this@MainActivity, UserMainActivity::class.java))
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to fetch user role: $e")
                     // Nếu có lỗi (ví dụ: không có mạng), điều hướng mặc định tới LoginActivity
-                    startActivity(Intent(this@LauncherActivity, LoginActivity::class.java))
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                 } finally {
                     finish()
                 }

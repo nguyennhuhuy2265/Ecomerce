@@ -1,4 +1,4 @@
-package com.example.ecommerce.utils
+package com.example.ecommerce.ui.component
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod

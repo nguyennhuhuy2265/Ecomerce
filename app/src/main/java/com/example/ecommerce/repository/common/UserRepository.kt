@@ -1,7 +1,8 @@
 package com.example.ecommerce.repository
 
 import android.util.Log
-import com.example.ecommerce.model.common.User
+import com.example.ecommerce.model.User
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +22,7 @@ class UserRepository {
                 role = role,
                 shopName = if (role == "seller") shopName else null,
                 shopCategory = if (role == "seller") category else null,
-                createdAt = com.google.firebase.Timestamp.now()
+                createdAt = Timestamp.now()
             )
             db.collection("users")
                 .document(userId)
@@ -60,7 +61,7 @@ class UserRepository {
             val user = User(
                 email = result.user?.email ?: "",
                 role = "user",
-                createdAt = com.google.firebase.Timestamp.now()
+                createdAt = Timestamp.now()
             )
             db.collection("users")
                 .document(userId)

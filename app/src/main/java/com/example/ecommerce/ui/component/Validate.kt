@@ -1,4 +1,4 @@
-package com.example.ecommerce.utils
+package com.example.ecommerce.ui.component
 
 import android.util.Patterns
 import android.widget.EditText

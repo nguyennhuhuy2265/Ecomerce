@@ -4,22 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.ecommerce.repository.CloudinaryRepository
 import com.example.ecommerce.databinding.ItemBannerBinding
-import com.example.ecommerce.model.common.Banner
+import com.example.ecommerce.model.Banner
 
 class BannerAdapter(
-    private var banners: List<Banner>,
-    private val cloudinaryRepository: CloudinaryRepository
+    private var banners: List<Banner>
 ) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
     class BannerViewHolder(private val binding: ItemBannerBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(banner: Banner, cloudinaryRepository: CloudinaryRepository) {
-            val imageUrl = banner.image_public_id.let {
-                cloudinaryRepository.getImageUrl(it, 800, 200, "fill")
-            }
+        fun bind(banner: Banner) {
             Glide.with(binding.ivBanner.context)
-                .load(imageUrl)
+                .load(banner.imageUrl)
+                .thumbnail(0.25f) // Giảm kích thước hình ảnh trước khi tải
+                .override(800, 200) // Resize hình ảnh thành 800x200
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Lưu trữ cache
                 .into(binding.ivBanner)
         }
     }
@@ -30,7 +30,7 @@ class BannerAdapter(
     }
 
     override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
-        holder.bind(banners[position], cloudinaryRepository)
+        holder.bind(banners[position])
     }
 
     override fun getItemCount(): Int = banners.size
@@ -38,5 +38,10 @@ class BannerAdapter(
     fun updateBanners(newBanners: List<Banner>) {
         banners = newBanners
         notifyDataSetChanged()
+    }
+
+    override fun onViewRecycled(holder: BannerViewHolder) {
+        super.onViewRecycled(holder)
+        Glide.with(holder.itemView.context).clear(holder.itemView) // Xóa hình ảnh khi view được tái chế
     }
 }

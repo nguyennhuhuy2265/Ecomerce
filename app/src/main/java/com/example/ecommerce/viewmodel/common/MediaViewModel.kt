@@ -15,13 +15,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     val uploadResult: LiveData<Result<String>> get() = _uploadResult
 
     fun uploadImage(filePath: String, publicId: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val result = repository.uploadImage(filePath, publicId)
             _uploadResult.postValue(result)
         }
-    }
-
-    fun getImageUrl(publicId: String, width: Int, height: Int, crop: String = "fill"): String {
-        return repository.getImageUrl(publicId, width, height, crop)
     }
 }
