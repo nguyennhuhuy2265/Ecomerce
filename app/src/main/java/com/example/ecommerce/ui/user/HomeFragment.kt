@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.viewpager2.widget.ViewPager2
 import com.example.ecommerce.R
-import com.example.ecommerce.adapter.BannerAdapter
-import com.example.ecommerce.adapter.ProductAdapter
+import com.example.ecommerce.adapter.user.BannerAdapter
+import com.example.ecommerce.adapter.user.ProductAdapter
 import com.example.ecommerce.databinding.FragmentUserHomeBinding
-import com.example.ecommerce.model.Product
 import com.example.ecommerce.ui.component.GridSpacingItemDecoration
 import com.example.ecommerce.ui.viewmodel.HomeViewModel
 

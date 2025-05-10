@@ -70,11 +70,28 @@
             </LinearLayout>
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btn_product_menu"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Menu" />
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/btn_edit_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Edit Product" />
+
+            <ImageButton
+                android:id="@+id/btn_delete_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete Product"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

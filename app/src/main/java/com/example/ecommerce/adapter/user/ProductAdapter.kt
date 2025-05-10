@@ -1,4 +1,4 @@
-package com.example.ecommerce.adapter
+package com.example.ecommerce.adapter.user
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

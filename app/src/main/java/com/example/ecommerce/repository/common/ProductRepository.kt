@@ -55,13 +55,40 @@ class ProductRepository {
     suspend fun addProduct(product: Product): Result<Unit> {
         return try {
             db.collection("products")
-                .document(product.id)
-                .set(product)
+                .add(product)
                 .await()
             Log.d(TAG, "Product added successfully: ${product.id}")
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to add product: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateProduct(product: Product): Result<Unit> {
+        return try {
+            db.collection("products")
+                .document(product.id)
+                .set(product)
+                .await()
+            Log.d(TAG, "Product updated successfully: ${product.id}")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update product: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteProduct(productId: String): Result<Unit> {
+        return try {
+            db.collection("products")
+                .document(productId)
+                .delete()
+                .await()
+            Log.d(TAG, "Product deleted successfully: $productId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to delete product: $e")
             Result.failure(e)
         }
     }
