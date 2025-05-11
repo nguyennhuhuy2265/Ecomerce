@@ -7,7 +7,7 @@ import com.example.ecommerce.R
 class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_user)
+        setContentView(R.layout.user_activity_chat)
 
         // Danh sách cuộc trò chuyện hoặc hộp tin nhắn
     }

@@ -10,13 +10,14 @@
 
     <!-- Quyền truy cập Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
-
     <!-- Quyền truy cập bộ nhớ (cho Android 9 trở xuống) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- Quyền truy cập ảnh (cho Android 13 trở lên) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
+
     <application
+        android:name=".config.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -63,7 +64,11 @@
         <activity
             android:name=".ui.user.ChatActivity"
             android:exported="false" />
+
         <activity android:name=".ui.seller.AddProductActivity"
+            android:exported="false" />
+
+        <activity android:name=".ui.seller.EditProductActivity"
             android:exported="false" />
 
     </application>

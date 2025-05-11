@@ -30,7 +30,4 @@
     <string name="notification">Thông báo</string>
 
 
-        <string name="cloudinary_cloud_name">dpcoggnin</string>
-        <string name="cloudinary_api_key">659752282218452</string>
-    <string name="cloudinary_api_secret">5yPPfGCHBBjLww_tYPH52T9Odk8</string>
 </resources>

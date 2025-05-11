@@ -80,18 +80,20 @@
                 android:id="@+id/btn_edit_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Edit Product" />
+                android:contentDescription="Edit Product"
+                android:src="@drawable/ic_edit"
+                app:tint="#4CAF50" />
 
             <ImageButton
                 android:id="@+id/btn_delete_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_delete"
+                android:layout_marginTop="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Delete Product"
-                android:layout_marginTop="8dp" />
+                android:src="@drawable/ic_delete"
+                app:tint="#F44336" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

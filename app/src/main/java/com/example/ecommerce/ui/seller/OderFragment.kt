@@ -13,6 +13,6 @@ class OderFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_seller_oder, container, false)
+        return inflater.inflate(R.layout.seller_fragment_oder, container, false)
     }
 }

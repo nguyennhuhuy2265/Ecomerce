@@ -7,7 +7,7 @@ import com.example.ecommerce.R
 class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart_user)
+        setContentView(R.layout.user_activity_cart)
 
         // Hiển thị danh sách sản phẩm trong giỏ hàng
     }

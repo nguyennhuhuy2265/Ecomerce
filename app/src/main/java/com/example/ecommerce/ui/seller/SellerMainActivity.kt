@@ -6,12 +6,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.example.ecommerce.R
-import com.example.ecommerce.databinding.ActivitySellerMainBinding
+import com.example.ecommerce.databinding.SellerActivityMainBinding
 import com.example.ecommerce.viewmodel.seller.SellerMainViewModel
 
 class SellerMainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySellerMainBinding
+    private lateinit var binding: SellerActivityMainBinding
     private val viewModel: SellerMainViewModel by viewModels()
 
     // Tạo các Fragment sẵn
@@ -25,7 +25,7 @@ class SellerMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySellerMainBinding.inflate(layoutInflater)
+        binding = SellerActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 //        // Thiết lập TopBar

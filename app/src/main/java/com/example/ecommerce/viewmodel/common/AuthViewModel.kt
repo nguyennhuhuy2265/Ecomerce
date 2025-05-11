@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ecommerce.repository.common.CategoryRepository
 import com.example.ecommerce.model.Category
 import com.example.ecommerce.model.User
-import com.example.ecommerce.repository.UserRepository
+import com.example.ecommerce.repository.common.UserRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
@@ -58,9 +58,9 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun registerWithEmail(email: String, password: String, role: String, shopName: String?, category: String?) {
+    fun registerWithEmail(email: String, password: String, role: String, shopName: String?, shopCategory: String?) {
         viewModelScope.launch {
-            val result = userRepository.registerUser(email, password, role, shopName, category)
+            val result = userRepository.registerUser(email, password, role, shopName, shopCategory)
             result.onSuccess { user ->
                 _registerSuccess.value = user
             }.onFailure { e ->

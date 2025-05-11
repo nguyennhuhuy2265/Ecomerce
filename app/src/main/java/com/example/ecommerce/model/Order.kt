@@ -2,18 +2,10 @@ package com.example.ecommerce.model
 
 import com.google.firebase.Timestamp
 
-data class OrderItem(
-    val productId: String,
-    val productName: String,
-    val productImage: String, // URL trực tiếp
-    val unitPrice: Double,
-    val quantity: Int,
-    val selectedOptions: List<OptionValue> = emptyList() // Thêm nếu có tùy chọn
-)
-
 data class Order(
     val id: String,
     val userId: String,
+    val sellerId: String,
     val items: List<OrderItem>,
     val totalAmount: Double,
     val status: OrderStatus,
@@ -22,6 +14,15 @@ data class Order(
     val updatedAt: Timestamp? = null // Thêm để theo dõi cập nhật
 )
 
+data class OrderItem(
+    val id: String,
+    val productId: String,
+    val productName: String,
+    val productImage: String, // URL trực tiếp
+    val unitPrice: Double,
+    val quantity: Int,
+    val selectedOptions: List<String> = emptyList() // Thêm nếu có tùy chọn
+)
 enum class OrderStatus {
     PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELED
 }

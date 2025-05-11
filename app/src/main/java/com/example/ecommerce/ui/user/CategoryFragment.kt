@@ -12,6 +12,6 @@ class CategoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_user_category, container, false)
+        return inflater.inflate(R.layout.user_fragment_category, container, false)
     }
 }

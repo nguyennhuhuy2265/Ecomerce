@@ -12,20 +12,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.ecommerce.R
 import com.example.ecommerce.adapter.user.BannerAdapter
 import com.example.ecommerce.adapter.user.ProductAdapter
-import com.example.ecommerce.databinding.FragmentUserHomeBinding
-import com.example.ecommerce.ui.component.GridSpacingItemDecoration
-import com.example.ecommerce.ui.viewmodel.HomeViewModel
+import com.example.ecommerce.databinding.UserFragmentHomeBinding
+import com.example.ecommerce.viewmodel.user.HomeViewModel
 
 class HomeFragment : Fragment() {
-    private var _binding: FragmentUserHomeBinding? = null
+    private var _binding: UserFragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var bannerAdapter: BannerAdapter
-    private lateinit var featuredAdapter: ProductAdapter
+    private lateinit var productAdapter: ProductAdapter
     private val bannerHandler = Handler(Looper.getMainLooper())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentUserHomeBinding.inflate(inflater, container, false)
+        _binding = UserFragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -33,7 +32,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bannerAdapter = BannerAdapter(emptyList())
-        featuredAdapter = ProductAdapter(emptyList()) { product ->
+        productAdapter = ProductAdapter(emptyList()) { product ->
             val fragment = ProductDetailFragment().apply { arguments = Bundle().apply { putParcelable("product", product) } }
             parentFragmentManager.beginTransaction()
                 .replace(R.id.flFragment, fragment)
@@ -45,13 +44,14 @@ class HomeFragment : Fragment() {
             adapter = bannerAdapter
             offscreenPageLimit = 1
         }
+
         binding.rvFeaturedProducts.apply {
             layoutManager = GridLayoutManager(context, 2)
-            adapter = featuredAdapter
+            adapter = productAdapter
             setHasFixedSize(true)
-            addItemDecoration(GridSpacingItemDecoration(2, 16, true))
         }
 
+        // Tự động cuộn banner mỗi 3 giây
         val bannerRunnable = object : Runnable {
             override fun run() {
                 if (bannerAdapter.itemCount > 0) {
@@ -62,22 +62,21 @@ class HomeFragment : Fragment() {
         }
         bannerHandler.postDelayed(bannerRunnable, 3000)
 
-        binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            val contentView = binding.nestedScrollView.getChildAt(0)
-            if (scrollY + binding.nestedScrollView.height >= contentView.height - 500 && viewModel.hasMoreData.value == true) {
-                viewModel.loadMoreFeaturedProducts()
-            }
+        viewModel.banners.observe(viewLifecycleOwner) { banners ->
+            bannerAdapter.updateBanners(banners)
         }
 
-        viewModel.banners.observe(viewLifecycleOwner) { bannerAdapter.updateBanners(it) }
-        viewModel.featuredProducts.observe(viewLifecycleOwner) { featuredAdapter.updateProducts(it) }
+        viewModel.featuredProducts.observe(viewLifecycleOwner) { products ->
+            productAdapter.updateProducts(products)
+        }
+
         viewModel.fetchBanners()
         viewModel.fetchFeaturedProducts()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshFeaturedProducts() // Làm mới sản phẩm khi quay lại tab
+        viewModel.refreshFeaturedProducts()
     }
 
     override fun onDestroyView() {

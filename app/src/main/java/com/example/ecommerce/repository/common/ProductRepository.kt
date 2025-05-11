@@ -1,114 +1,64 @@
-package com.example.ecommerce.repository
+package com.example.ecommerce.repository.common
 
-import android.util.Log
 import com.example.ecommerce.model.Product
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class ProductRepository {
-    private val db = FirebaseFirestore.getInstance()
-    private var lastVisible: DocumentSnapshot? = null
-    private val pageSize = 10
-    private val TAG = "ProductRepository"
+    private val firestore = FirebaseFirestore.getInstance()
+    private val productsCollection = firestore.collection("products")
 
-    suspend fun getProducts(isInitialLoad: Boolean): Result<Pair<List<Product>, Boolean>> {
+    suspend fun getProducts(): List<Product> {
         return try {
-            if (isInitialLoad) {
-                lastVisible = null
-            }
-
-            var query = db.collection("products")
-                .orderBy("name")
-                .limit(pageSize.toLong())
-
-            if (lastVisible != null) {
-                Log.d(TAG, "getProducts: Loading more with lastVisible=$lastVisible")
-                query = query.startAfter(lastVisible)
-            } else {
-                Log.d(TAG, "getProducts: Initial load")
-            }
-
-            val snapshot = query.get().await()
-            val products = snapshot.documents.mapNotNull { doc ->
-                try {
-                    val product = doc.toObject(Product::class.java)
-                    if (product == null) {
-                        Log.w(TAG, "Failed to map document ${doc.id}")
-                    }
-                    product
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error mapping document ${doc.id}: $e")
-                    null
-                }
-            }
-            lastVisible = snapshot.documents.lastOrNull()
-            val hasMore = products.isNotEmpty() && lastVisible != null
-            Log.d(TAG, "getProducts: Fetched ${products.size} products, hasMore=$hasMore, lastVisible=$lastVisible")
-            Result.success(Pair(products, hasMore))
+            val snapshot = productsCollection.get().await()
+            snapshot.toObjects(Product::class.java)
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching products: $e")
-            Result.failure(e)
+            emptyList()
         }
     }
 
-    suspend fun addProduct(product: Product): Result<Unit> {
+    suspend fun getProductsBySeller(sellerId: String): List<Product> {
         return try {
-            db.collection("products")
-                .add(product)
+            val snapshot = productsCollection
+                .whereEqualTo("sellerId", sellerId)
+                .get()
                 .await()
-            Log.d(TAG, "Product added successfully: ${product.id}")
-            Result.success(Unit)
+            snapshot.toObjects(Product::class.java)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to add product: $e")
-            Result.failure(e)
+            emptyList()
         }
     }
 
-    suspend fun updateProduct(product: Product): Result<Unit> {
+    suspend fun addProduct(product: Product): Boolean {
         return try {
-            db.collection("products")
-                .document(product.id)
-                .set(product)
-                .await()
-            Log.d(TAG, "Product updated successfully: ${product.id}")
-            Result.success(Unit)
+            product.id?.let { id ->
+                productsCollection.document(id).set(product).await()
+                true
+            } ?: false
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to update product: $e")
-            Result.failure(e)
+            false
         }
     }
 
-    suspend fun deleteProduct(productId: String): Result<Unit> {
+    suspend fun updateProduct(product: Product): Boolean {
         return try {
-            db.collection("products")
-                .document(productId)
-                .delete()
-                .await()
-            Log.d(TAG, "Product deleted successfully: $productId")
-            Result.success(Unit)
+            product.id?.let { id ->
+                productsCollection.document(id).set(product).await()
+                true
+            } ?: false
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to delete product: $e")
-            Result.failure(e)
+            false
         }
     }
 
-    suspend fun updateProductImage(productId: String, imagePublicIds: List<String>, defaultImagePublicId: String): Result<Unit> {
+    suspend fun deleteProduct(productId: String): Boolean {
         return try {
-            db.collection("products")
-                .document(productId)
-                .update(
-                    mapOf(
-                        "image_public_ids" to imagePublicIds,
-                        "default_image_public_id" to defaultImagePublicId
-                    )
-                )
-                .await()
-            Log.d(TAG, "Product image updated successfully: $productId")
-            Result.success(Unit)
+            productsCollection.document(productId).delete().await()
+            println("Sản phẩm $productId đã được xóa thành công")
+            true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to update product image: $e")
-            Result.failure(e)
+            println("Lỗi khi xóa sản phẩm $productId: ${e.message}")
+            false
         }
     }
 }

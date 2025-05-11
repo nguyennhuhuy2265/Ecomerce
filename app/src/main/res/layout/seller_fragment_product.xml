@@ -30,12 +30,11 @@
         <Button
             android:id="@+id/btn_add_new_product"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="12dp"
+            android:backgroundTint="@color/primary"
             android:text="+ Thêm"
             android:textAllCaps="false"
-            android:layout_marginStart="12dp"
-            android:background="@drawable/bg_primary_button"
-            android:backgroundTint="@color/primary"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
@@ -124,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        tools:listitem="@layout/item_seller_product" />
+        tools:listitem="@layout/seller_item_product" />
 
 
 </LinearLayout>

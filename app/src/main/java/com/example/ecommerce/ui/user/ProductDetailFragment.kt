@@ -11,18 +11,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.example.ecommerce.databinding.FragmentProductDetailUserBinding
-import com.example.ecommerce.model.OptionValue
+import com.example.ecommerce.databinding.UserFragmentProductDetailBinding
+import com.example.ecommerce.model.OptionGroup
 import com.example.ecommerce.model.Product
+import java.text.NumberFormat
+import java.util.Locale
 
 class ProductDetailFragment : Fragment() {
-    private var _binding: FragmentProductDetailUserBinding? = null
+    private var _binding: UserFragmentProductDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var product: Product
-    private val selectedOptions = mutableMapOf<String, OptionValue>()
+    private val selectedOptions = mutableMapOf<String, String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentProductDetailUserBinding.inflate(inflater, container, false)
+        _binding = UserFragmentProductDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,18 +39,19 @@ class ProductDetailFragment : Fragment() {
         // Hiển thị thông tin sản phẩm
         with(binding) {
             tvProductName.text = product.name
-            tvPrice.text = "₫${product.price}"
+            val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN"))
+            tvPrice.text = "₫${formatter.format(product.price)}"
             tvDescription.text = product.description
             tvShopLocation.text = product.shopLocation ?: "Không xác định"
             Glide.with(this@ProductDetailFragment)
-                .load(product.defaultImageUrl ?: product.imageUrls.firstOrNull() ?: "")
+                .load(product.imageUrls.firstOrNull() ?: "")
                 .into(ivProductImage)
         }
 
         // Thiết lập các tùy chọn
         binding.llOptionGroups.apply {
             removeAllViews()
-            product.optionGroups.sortedBy { it.priority }.forEach { group ->
+            product.optionGroups.forEach { group ->
                 addView(TextView(requireContext()).apply {
                     text = group.name
                     textSize = 16f
@@ -69,17 +72,15 @@ class ProductDetailFragment : Fragment() {
 
                 group.values.forEachIndexed { index, value ->
                     radioGroup.addView(RadioButton(requireContext()).apply {
-                        text = if (value.extraPrice > 0) "${value.displayName} (+₫${value.extraPrice})" else value.displayName
+                        text = value
                         id = index
                         tag = value
                         layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                        isChecked = value.isDefault
-                        if (value.isDefault) selectedOptions[group.id] = value
                     })
                 }
 
                 radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                    selectedOptions[group.id] = radioGroup.findViewById<RadioButton>(checkedId).tag as OptionValue
+                    selectedOptions[group.id] = radioGroup.findViewById<RadioButton>(checkedId).tag as String
                 }
                 addView(radioGroup)
             }
@@ -87,14 +88,8 @@ class ProductDetailFragment : Fragment() {
 
         // Thêm vào giỏ hàng
         binding.btnAddToCart.setOnClickListener {
-            val missingGroups = product.optionGroups.filter { it.isRequired && !selectedOptions.containsKey(it.id) }
-            if (missingGroups.isNotEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng chọn: ${missingGroups.joinToString { it.name }}", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val totalPrice = product.price + selectedOptions.values.sumOf { it.extraPrice }
-            Toast.makeText(requireContext(), "Đã thêm vào giỏ hàng: ${product.name} - Tổng: ₫$totalPrice", Toast.LENGTH_SHORT).show()
+            val totalPrice = product.price
+            Toast.makeText(requireContext(), "Đã thêm vào giỏ hàng: ${product.name} - Tổng: ₫${NumberFormat.getNumberInstance(Locale("vi", "VN")).format(totalPrice)}", Toast.LENGTH_SHORT).show()
             parentFragmentManager.popBackStack()
         }
     }

@@ -9,7 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.ecommerce.R
-import com.example.ecommerce.databinding.ActivityRegisterBinding
+import com.example.ecommerce.databinding.CommonActivityRegisterBinding
 import com.example.ecommerce.model.Category
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.user.UserMainActivity
@@ -21,7 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class RegisterActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityRegisterBinding
+    private lateinit var binding: CommonActivityRegisterBinding
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var loadingHandler: LoadingHandler
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -30,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        binding = CommonActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         loadingHandler = LoadingHandler(supportFragmentManager)

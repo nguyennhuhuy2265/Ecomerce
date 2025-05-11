@@ -13,6 +13,6 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_seller_dashboard, container, false)
+        return inflater.inflate(R.layout.seller_fragment_dashboard, container, false)
     }
 }

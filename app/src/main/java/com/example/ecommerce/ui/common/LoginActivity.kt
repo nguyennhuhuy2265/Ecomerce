@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.ecommerce.R
-import com.example.ecommerce.databinding.ActivityLoginBinding
+import com.example.ecommerce.databinding.CommonActivityLoginBinding
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
@@ -20,7 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: CommonActivityLoginBinding
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var loadingHandler: LoadingHandler
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = CommonActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         loadingHandler = LoadingHandler(supportFragmentManager)

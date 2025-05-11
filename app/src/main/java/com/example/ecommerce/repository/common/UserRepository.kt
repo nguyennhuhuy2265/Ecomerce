@@ -1,4 +1,4 @@
-package com.example.ecommerce.repository
+package com.example.ecommerce.repository.common
 
 import android.util.Log
 import com.example.ecommerce.model.User
@@ -13,15 +13,16 @@ class UserRepository {
     private val db = FirebaseFirestore.getInstance()
     private val TAG = "UserRepository"
 
-    suspend fun registerUser(email: String, password: String, role: String, shopName: String?, category: String?): Result<User> {
+    suspend fun registerUser(email: String, password: String, role: String, shopName: String?, shopCategory: String?): Result<User> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val userId = result.user?.uid ?: throw Exception("User ID not found")
             val user = User(
+                id = userId,
                 email = email,
                 role = role,
                 shopName = if (role == "seller") shopName else null,
-                shopCategory = if (role == "seller") category else null,
+                shopCategory = if (role == "seller") shopCategory else null,
                 createdAt = Timestamp.now()
             )
             db.collection("users")
@@ -40,11 +41,11 @@ class UserRepository {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val userId = result.user?.uid ?: throw Exception("User ID not found")
-            val user = db.collection("users")
+            val snapshot = db.collection("users")
                 .document(userId)
                 .get()
                 .await()
-                .toObject(User::class.java)
+            val user = snapshot.toObject(User::class.java)?.apply { id = userId }
             Log.d(TAG, "Login successful: $userId")
             Result.success(user)
         } catch (e: Exception) {
@@ -59,7 +60,10 @@ class UserRepository {
             val result = auth.signInWithCredential(credential).await()
             val userId = result.user?.uid ?: throw Exception("User ID not found")
             val user = User(
+                id = userId,
                 email = result.user?.email ?: "",
+                name = result.user?.displayName ?: "",
+                avatarUrl = result.user?.photoUrl?.toString(),
                 role = "user",
                 createdAt = Timestamp.now()
             )
@@ -75,11 +79,11 @@ class UserRepository {
         }
     }
 
-    suspend fun updateAvatar(userId: String, avatarPublicId: String): Result<Unit> {
+    suspend fun updateAvatar(userId: String, avatarUrl: String): Result<Unit> {
         return try {
             db.collection("users")
                 .document(userId)
-                .update("avatar_public_id", avatarPublicId)
+                .update("avatarUrl", avatarUrl)
                 .await()
             Log.d(TAG, "Avatar updated successfully for user: $userId")
             Result.success(Unit)
@@ -89,11 +93,11 @@ class UserRepository {
         }
     }
 
-    suspend fun updateBanner(userId: String, bannerPublicId: String): Result<Unit> {
+    suspend fun updateBanner(userId: String, bannerUrl: String): Result<Unit> {
         return try {
             db.collection("users")
                 .document(userId)
-                .update("banner_public_id", bannerPublicId)
+                .update("bannerUrl", bannerUrl)
                 .await()
             Log.d(TAG, "Banner updated successfully for user: $userId")
             Result.success(Unit)

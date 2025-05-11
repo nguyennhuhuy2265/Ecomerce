@@ -23,13 +23,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_launcher)
+        setContentView(R.layout.common_activity_launcher)
 
         auth = FirebaseAuth.getInstance()
 
         Handler(Looper.getMainLooper()).postDelayed({
-//            checkLoginStatus()
-      startActivity(Intent(this, LoginActivity::class.java))
+            checkLoginStatus()
+//        startActivity(Intent(this, LoginActivity::class.java))
         }, 1000) // Delay 1s để show splash nhẹ
     }
 

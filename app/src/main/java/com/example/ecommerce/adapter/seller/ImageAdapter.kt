@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.ecommerce.databinding.ItemSellerImageBinding
+import com.example.ecommerce.databinding.SellerItemImageBinding
 
 class ImageAdapter(private val images: MutableList<String>) :
     RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    class ImageViewHolder(private val binding: ItemSellerImageBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ImageViewHolder(private val binding: SellerItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageUrl: String) {
             Glide.with(binding.ivImage.context)
                 .load(imageUrl)
@@ -18,7 +18,7 @@ class ImageAdapter(private val images: MutableList<String>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val binding = ItemSellerImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = SellerItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ImageViewHolder(binding)
     }
 

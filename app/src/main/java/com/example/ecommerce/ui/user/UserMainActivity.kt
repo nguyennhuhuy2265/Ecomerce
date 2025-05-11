@@ -8,13 +8,13 @@ import com.example.ecommerce.AccountFragment
 import com.example.ecommerce.CategoryFragment
 import com.example.ecommerce.NotificationFragment
 import com.example.ecommerce.R
-import com.example.ecommerce.databinding.ActivityUserMainBinding
+import com.example.ecommerce.databinding.UserActivityMainBinding
 import com.example.ecommerce.viewmodel.user.UserMainViewModel
 
 class UserMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityUserMainBinding.inflate(layoutInflater)
+        val binding = UserActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val viewModel: UserMainViewModel by viewModels()

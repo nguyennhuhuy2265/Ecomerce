@@ -9,17 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerce.R
 import com.example.ecommerce.adapter.seller.ProductAdapter
-import com.example.ecommerce.databinding.FragmentSellerProductBinding
+import com.example.ecommerce.databinding.SellerFragmentProductBinding
 import com.example.ecommerce.viewmodel.seller.ProductViewModel
 
 class ProductFragment : Fragment() {
-    private var _binding: FragmentSellerProductBinding? = null
+    private var _binding: SellerFragmentProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProductViewModel by viewModels()
     private lateinit var productAdapter: ProductAdapter
@@ -29,23 +30,33 @@ class ProductFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSellerProductBinding.inflate(inflater, container, false)
+        _binding = SellerFragmentProductBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Khởi tạo ProductAdapter
         productAdapter = ProductAdapter(
             products = emptyList(),
             onEdit = { product ->
-                // TODO: Điều hướng đến EditProductFragment sẽ được thêm sau
+                // Chuyển đến EditProductActivity để chỉnh sửa sản phẩm
+                val intent = Intent(requireContext(), EditProductActivity::class.java)
+                intent.putExtra("product", product)
+                startActivity(intent)
             },
             onDelete = { product ->
-                // TODO: Xóa sản phẩm sẽ được thêm sau
+                // Xóa sản phẩm
+                product.id?.let { productId ->
+                    viewModel.deleteProduct(productId)
+                } ?: run {
+                    Toast.makeText(requireContext(), "Không thể xóa sản phẩm: ID không hợp lệ", Toast.LENGTH_SHORT).show()
+                }
             }
         )
 
+        // Cấu hình RecyclerView
         binding.rvProducts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = productAdapter
@@ -56,6 +67,17 @@ class ProductFragment : Fragment() {
         viewModel.filteredProducts.observe(viewLifecycleOwner) { products ->
             productAdapter.updateProducts(products)
             binding.tvProductCount.text = "${products.size} sản phẩm"
+        }
+
+        // Quan sát kết quả xóa sản phẩm
+        viewModel.deleteProductSuccess.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Xóa sản phẩm thành công", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.deleteProductError.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), "Xóa sản phẩm thất bại: $error", Toast.LENGTH_SHORT).show()
         }
 
         // Tìm kiếm sản phẩm
@@ -114,7 +136,6 @@ class ProductFragment : Fragment() {
             val intent = Intent(requireContext(), AddProductActivity::class.java)
             startActivity(intent)
         }
-
 
         // Tải danh sách sản phẩm ban đầu
         viewModel.fetchProducts()

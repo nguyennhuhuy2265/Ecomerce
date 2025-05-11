@@ -12,7 +12,7 @@ class LoadingDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(context)
-        val view: View = inflater.inflate(R.layout.dialog_loading, null)
+        val view: View = inflater.inflate(R.layout.common_dialog_loading, null)
 
         val builder = AlertDialog.Builder(requireContext(), R.style.LoadingDialogTheme)
         builder.setView(view)

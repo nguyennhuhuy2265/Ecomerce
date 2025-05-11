@@ -25,16 +25,15 @@ import com.example.ecommerce.repository.common.UploadStatus
 import com.example.ecommerce.viewmodel.common.ImageUploadViewModel
 import com.example.ecommerce.viewmodel.seller.ProductViewModel
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class AddProductActivity : AppCompatActivity() {
+class EditProductActivity : AppCompatActivity() {
     private lateinit var binding: SellerActivityProductFormBinding
     private lateinit var productViewModel: ProductViewModel
     private lateinit var imageUploadViewModel: ImageUploadViewModel
+    private lateinit var product: Product
     private val imageUrls = mutableListOf<String>()
     private var categories: List<Category> = emptyList()
-    private var tempDocumentId: String? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -42,10 +41,7 @@ class AddProductActivity : AppCompatActivity() {
             val imageUri: Uri? = data?.data
             imageUri?.let { uri ->
                 val filePath = getRealPathFromURI(uri) ?: uri.toString()
-                if (tempDocumentId == null) {
-                    tempDocumentId = FirebaseFirestore.getInstance().collection("products").document().id
-                }
-                imageUploadViewModel.uploadImage(filePath, "products", tempDocumentId!!)
+                imageUploadViewModel.uploadImage(filePath, "products", product.id ?: "temp_doc_id")
             }
         }
     }
@@ -59,7 +55,7 @@ class AddProductActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Thêm sản phẩm"
+        supportActionBar?.title = "Chỉnh sửa sản phẩm"
 
         val firestore = FirebaseFirestore.getInstance()
         val cloudinary = (application as com.example.ecommerce.config.MyApp).cloudinary
@@ -67,12 +63,19 @@ class AddProductActivity : AppCompatActivity() {
         productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
         imageUploadViewModel = ViewModelProvider(this, ImageUploadViewModel.Factory(imageUploadRepository)).get(ImageUploadViewModel::class.java)
 
+        product = intent.getParcelableExtra("product") ?: run {
+            Toast.makeText(this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        imageUrls.addAll(product.imageUrls)
         imageAdapter = ProductImageAdapter(imageUrls) { position ->
             imageUrls.removeAt(position)
             imageAdapter.notifyItemRemoved(position)
         }
         binding.rvProductImages.apply {
-            layoutManager = LinearLayoutManager(this@AddProductActivity, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(this@EditProductActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = imageAdapter
         }
 
@@ -107,21 +110,29 @@ class AddProductActivity : AppCompatActivity() {
             val categoryNames = categoryList.map { it.name }
             val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryNames)
             binding.spinnerCategory.setAdapter(adapter)
+            val selectedCategory = categories.find { it.id == product.categoryId }
+            binding.spinnerCategory.setText(selectedCategory?.name, false)
         }
 
-        productViewModel.addProductSuccess.observe(this) { success ->
+        productViewModel.updateProductSuccess.observe(this) { success ->
             if (success) {
-                Toast.makeText(this, "Thêm sản phẩm thành công", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Cập nhật sản phẩm thành công", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
 
-        productViewModel.addProductError.observe(this) { error ->
-            Toast.makeText(this, "Thêm sản phẩm thất bại: $error", Toast.LENGTH_SHORT).show()
+        productViewModel.updateProductError.observe(this) { error ->
+            Toast.makeText(this, "Cập nhật sản phẩm thất bại: $error", Toast.LENGTH_SHORT).show()
         }
 
+        binding.etProductName.setText(product.name)
+        binding.etProductDescription.setText(product.description)
+        binding.etProductPrice.setText(product.price.toString())
+        binding.etProductStock.setText(product.stock.toString())
+        binding.etProductLocation.setText(product.shopLocation)
+
         binding.btnSaveProduct.setOnClickListener {
-            saveProduct()
+            updateProduct()
         }
     }
 
@@ -150,7 +161,7 @@ class AddProductActivity : AppCompatActivity() {
         return null
     }
 
-    private fun saveProduct() {
+    private fun updateProduct() {
         val name = binding.etProductName.text.toString().trim()
         val description = binding.etProductDescription.text.toString().trim()
         val categoryName = binding.spinnerCategory.text.toString()
@@ -179,26 +190,17 @@ class AddProductActivity : AppCompatActivity() {
             return
         }
 
-        val sellerId = FirebaseAuth.getInstance().currentUser?.uid ?: run {
-            Toast.makeText(this, "Không tìm thấy thông tin người bán", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val productId = tempDocumentId ?: FirebaseFirestore.getInstance().collection("products").document().id
-        val product = Product(
-            id = productId,
+        val updatedProduct = product.copy(
             name = name,
             description = description,
             categoryId = categoryId,
-            sellerId = sellerId,
             price = price,
             stock = stock,
             imageUrls = imageUrls,
-            shopLocation = location,
-            createdAt = Timestamp.now()
+            shopLocation = location
         )
 
-        productViewModel.addProduct(product)
+        productViewModel.updateProduct(updatedProduct)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
