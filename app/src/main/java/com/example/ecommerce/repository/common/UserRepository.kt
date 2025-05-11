@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class UserRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -103,6 +104,47 @@ class UserRepository {
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to update banner: $e")
+            Result.failure(e)
+        }
+    }
+    suspend fun getCurrentUserInfo(): Result<User?> {
+        return try {
+            val user = auth.currentUser ?: return Result.success(null)
+            val userId = user.uid
+            val snapshot = db.collection("users")
+                .document(userId)
+                .get()
+                .await()
+            val dbUser = snapshot.toObject(User::class.java)?.apply { id = userId }
+            if (dbUser != null) {
+                Result.success(dbUser.copy(
+                    email = user.email ?: dbUser.email,
+                    name = user.displayName ?: dbUser.name,
+                    phoneNumber = user.phoneNumber ?: dbUser.phoneNumber
+                ))
+            } else {
+                Result.success(User(
+                    id = userId,
+                    email = user.email ?: "",
+                    name = user.displayName ?: "",
+                    avatarUrl = user.photoUrl?.toString(),
+                    role = "user",
+                    createdAt = Timestamp(Date(user.metadata?.creationTimestamp ?: 0)) // Sửa lỗi tại đây
+                ))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get user info: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun logout(): Result<Unit> {
+        return try {
+            auth.signOut()
+            Log.d(TAG, "Logout successful")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Logout failed: $e")
             Result.failure(e)
         }
     }
