@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
@@ -94,19 +95,6 @@ class UserRepository {
         }
     }
 
-    suspend fun updateBanner(userId: String, bannerUrl: String): Result<Unit> {
-        return try {
-            db.collection("users")
-                .document(userId)
-                .update("bannerUrl", bannerUrl)
-                .await()
-            Log.d(TAG, "Banner updated successfully for user: $userId")
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to update banner: $e")
-            Result.failure(e)
-        }
-    }
     suspend fun getCurrentUserInfo(): Result<User?> {
         return try {
             val user = auth.currentUser ?: return Result.success(null)
@@ -134,6 +122,20 @@ class UserRepository {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get user info: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateUser(user: User): Result<Unit> {
+        return try {
+            db.collection("users")
+                .document(user.id)
+                .set(user, SetOptions.merge()) // Sử dụng merge để không ghi đè các field không có trong user
+                .await()
+            Log.d(TAG, "User updated successfully: ${user.id}")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update user: $e")
             Result.failure(e)
         }
     }

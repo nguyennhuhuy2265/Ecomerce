@@ -38,7 +38,7 @@ class AuthViewModel : ViewModel() {
 
     private fun fetchCategories() {
         viewModelScope.launch {
-            val result = categoryRepository.fetchCategories()
+            val result = categoryRepository.getCategories()
             result.onSuccess { categoryList ->
                 _categories.value = categoryList
             }.onFailure { e ->

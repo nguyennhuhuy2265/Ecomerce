@@ -11,7 +11,7 @@ class CategoryRepository {
     private val db = FirebaseFirestore.getInstance()
     private val TAG = "CategoryRepository"
 
-    suspend fun fetchCategories(): Result<List<Category>> {
+    suspend fun getCategories(): Result<List<Category>> {
         return try {
             val snapshot = db.collection("categories")
                 .orderBy("name")

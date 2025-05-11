@@ -95,6 +95,11 @@ class ShopFragment : Fragment() {
         binding.btnLogout.setOnClickListener {
             viewModel.logout()
         }
+
+        binding.btnRefresh.setOnClickListener {
+            viewModel.fetchSellerInfo()
+            Toast.makeText(requireContext(), "Đã làm mới thông tin", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
