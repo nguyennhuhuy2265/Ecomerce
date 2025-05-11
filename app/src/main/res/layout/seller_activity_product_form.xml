@@ -227,7 +227,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:hint="Tên nhóm tùy chọn 1"
+                        android:hint="Size"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -250,7 +250,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:hint="Giá trị 1"
+                            android:hint="S"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -267,7 +267,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginHorizontal="4dp"
-                            android:hint="Giá trị 2"
+                            android:hint="M"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -284,7 +284,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="4dp"
-                            android:hint="Giá trị 3"
+                            android:hint="L"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -302,7 +302,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:hint="Tên nhóm tùy chọn 2"
+                        android:hint="Màu"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -325,7 +325,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:hint="Giá trị 1"
+                            android:hint="Xanh"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -342,7 +342,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginHorizontal="4dp"
-                            android:hint="Giá trị 2"
+                            android:hint="Đỏ"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -359,7 +359,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="4dp"
-                            android:hint="Giá trị 3"
+                            android:hint="Vàng"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -377,7 +377,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:hint="Tên nhóm tùy chọn 3"
+                        android:hint="Dung lượng, Loại, Kiểu,..."
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -399,7 +399,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:hint="Giá trị 1"
+                            android:hint="64GB"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -416,7 +416,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginHorizontal="4dp"
-                            android:hint="Giá trị 2"
+                            android:hint="128GB"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -433,7 +433,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="4dp"
-                            android:hint="Giá trị 3"
+                            android:hint="256GB"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
                             <com.google.android.material.textfield.TextInputEditText

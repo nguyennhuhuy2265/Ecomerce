@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            checkLoginStatus()
-//        startActivity(Intent(this, LoginActivity::class.java))
+//            checkLoginStatus()
+        startActivity(Intent(this, LoginActivity::class.java))
         }, 1000) // Delay 1s để show splash nhẹ
     }
 

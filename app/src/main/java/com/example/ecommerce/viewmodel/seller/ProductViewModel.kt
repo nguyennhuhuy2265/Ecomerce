@@ -56,7 +56,10 @@ class ProductViewModel : ViewModel() {
 
     fun fetchProducts() {
         viewModelScope.launch {
-            val sellerId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
+            val sellerId = FirebaseAuth.getInstance().currentUser?.uid ?: run {
+                _deleteProductError.value = "Người dùng chưa đăng nhập"
+                return@launch
+            }
             val products = productRepository.getProductsBySeller(sellerId)
             _products.value = products
             applyFilterAndSort()
@@ -129,7 +132,6 @@ class ProductViewModel : ViewModel() {
         var filteredList = _products.value.orEmpty()
 
         filteredList = when (currentFilter) {
-            "active" -> filteredList.filter { it.stock > 0 }
             "out_of_stock" -> filteredList.filter { it.stock == 0 }
             else -> filteredList
         }
@@ -145,6 +147,7 @@ class ProductViewModel : ViewModel() {
             else -> filteredList.sortedByDescending { it.createdAt?.toDate()?.time ?: 0L }
         }
 
+        println("Danh sách sau khi lọc/sắp xếp: ${filteredList.map { it.name }}")
         _filteredProducts.value = filteredList
     }
 }

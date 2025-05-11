@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.seller
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -47,12 +48,8 @@ class ProductFragment : Fragment() {
                 startActivity(intent)
             },
             onDelete = { product ->
-                // Xóa sản phẩm
-                product.id?.let { productId ->
-                    viewModel.deleteProduct(productId)
-                } ?: run {
-                    Toast.makeText(requireContext(), "Không thể xóa sản phẩm: ID không hợp lệ", Toast.LENGTH_SHORT).show()
-                }
+                // Hiển thị dialog xác nhận xóa
+                showDeleteConfirmationDialog(product)
             }
         )
 
@@ -137,6 +134,12 @@ class ProductFragment : Fragment() {
             startActivity(intent)
         }
 
+        // Xử lý nút Refresh
+        binding.btnRefresh.setOnClickListener {
+            viewModel.fetchProducts() // Gọi lại để load danh sách như khi vừa vào Fragment
+            Toast.makeText(requireContext(), "Đã làm mới danh sách", Toast.LENGTH_SHORT).show()
+        }
+
         // Tải danh sách sản phẩm ban đầu
         viewModel.fetchProducts()
     }
@@ -152,6 +155,31 @@ class ProductFragment : Fragment() {
                 setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
             }
         }
+    }
+
+    // Hàm hiển thị dialog xác nhận xóa
+    private fun showDeleteConfirmationDialog(product: com.example.ecommerce.model.Product) {
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Xác nhận xóa")
+            .setMessage("Bạn có chắc chắn muốn xóa sản phẩm \"${product.name}\" không?")
+            .setPositiveButton("Xác nhận") { _, _ ->
+                product.id?.let { productId ->
+                    viewModel.deleteProduct(productId)
+                } ?: run {
+                    Toast.makeText(requireContext(), "Không thể xóa: ID sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Hủy") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(true)
+            .create()
+
+        dialog.show()
+
+        // Tùy chỉnh màu nút
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.error))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
     }
 
     override fun onDestroyView() {

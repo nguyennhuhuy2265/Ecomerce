@@ -95,6 +95,17 @@
             android:layout_weight="1"
             android:text="154 sản phẩm" />
 
+        <ImageView
+            android:id="@+id/btnRefresh"
+            android:layout_width="15dp"
+            android:layout_height="18dp"
+            android:layout_gravity="end"
+            android:background="@color/background"
+            android:contentDescription="Refresh"
+            android:src="@drawable/ic_refesh"
+            app:tint="@color/text_secondary"
+            android:layout_marginRight="180dp"/>
+
         <LinearLayout
             android:id="@+id/layout_sort"
             android:layout_width="wrap_content"

@@ -19,12 +19,16 @@ class ProductRepository {
 
     suspend fun getProductsBySeller(sellerId: String): List<Product> {
         return try {
+            println("Đang truy vấn sản phẩm cho sellerId: $sellerId")
             val snapshot = productsCollection
                 .whereEqualTo("sellerId", sellerId)
                 .get()
                 .await()
-            snapshot.toObjects(Product::class.java)
+            val products = snapshot.toObjects(Product::class.java)
+            println("Truy vấn thành công, số lượng sản phẩm: ${products.size}")
+            products
         } catch (e: Exception) {
+            println("Lỗi khi lấy sản phẩm: ${e.message}")
             emptyList()
         }
     }
@@ -32,10 +36,16 @@ class ProductRepository {
     suspend fun addProduct(product: Product): Boolean {
         return try {
             product.id?.let { id ->
+                println("Đang thêm sản phẩm với id: $id")
                 productsCollection.document(id).set(product).await()
+                println("Thêm sản phẩm thành công")
                 true
-            } ?: false
+            } ?: run {
+                println("ID sản phẩm không hợp lệ")
+                false
+            }
         } catch (e: Exception) {
+            println("Lỗi khi thêm sản phẩm: ${e.message}")
             false
         }
     }
@@ -43,10 +53,16 @@ class ProductRepository {
     suspend fun updateProduct(product: Product): Boolean {
         return try {
             product.id?.let { id ->
+                println("Đang cập nhật sản phẩm với id: $id")
                 productsCollection.document(id).set(product).await()
+                println("Cập nhật sản phẩm thành công")
                 true
-            } ?: false
+            } ?: run {
+                println("ID sản phẩm không hợp lệ")
+                false
+            }
         } catch (e: Exception) {
+            println("Lỗi khi cập nhật sản phẩm: ${e.message}")
             false
         }
     }
