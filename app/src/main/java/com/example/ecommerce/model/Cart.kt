@@ -5,14 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Cart(
-    val id: String,
-    val userId: String,
-    val items: List<CartItem> = emptyList()
-) : Parcelable
-
-@Parcelize
-data class CartItem(
     val id: String = "",
+    val userId: String,
+    val sellerId: String,
     val productId: String,
     val productName: String,
     val productImage: String,

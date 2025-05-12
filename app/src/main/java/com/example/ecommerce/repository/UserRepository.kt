@@ -1,7 +1,6 @@
 package com.example.ecommerce.repository.common
 
 import android.util.Log
-import com.example.ecommerce.model.CartItem
 import com.example.ecommerce.model.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth

@@ -90,7 +90,15 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnAddToCart.setOnClickListener {
-            Toast.makeText(this, "Thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
+            val product = viewModel.product.value
+            if (product != null) {
+                AddToCartDialog(this, product) { selectedOptions, quantity ->
+                    // Gọi logic thêm vào giỏ hàng (cần cập nhật ProductDetailViewModel)
+                    viewModel.addToCart(product, selectedOptions, quantity)
+                }.show()
+            } else {
+                Toast.makeText(this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnBuyNow.setOnClickListener {
