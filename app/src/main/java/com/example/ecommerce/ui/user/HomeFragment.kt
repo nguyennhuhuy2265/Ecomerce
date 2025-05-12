@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -33,11 +34,10 @@ class HomeFragment : Fragment() {
 
         bannerAdapter = BannerAdapter(emptyList())
         productAdapter = ProductAdapter(emptyList()) { product ->
-            val fragment = ProductDetailFragment().apply { arguments = Bundle().apply { putParcelable("product", product) } }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.flFragment, fragment)
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                putExtra("product", product) // Truyền dữ liệu sản phẩm qua Intent
+            }
+            startActivity(intent)
         }
 
         binding.vpBanner.apply {

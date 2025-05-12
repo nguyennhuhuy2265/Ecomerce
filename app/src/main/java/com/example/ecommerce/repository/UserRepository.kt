@@ -1,6 +1,7 @@
 package com.example.ecommerce.repository.common
 
 import android.util.Log
+import com.example.ecommerce.model.CartItem
 import com.example.ecommerce.model.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -150,4 +151,26 @@ class UserRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getUserById(userId: String): Result<User> {
+        return try {
+            val snapshot = db.collection("users")
+                .document(userId)
+                .get()
+                .await()
+            val user = snapshot.toObject(User::class.java)?.apply { id = userId }
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception("Người dùng không tồn tại"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get user: $e")
+            Result.failure(e)
+        }
+    }
+
+
+
+
 }

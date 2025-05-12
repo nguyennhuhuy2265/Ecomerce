@@ -74,6 +74,14 @@
         <activity android:name=".ui.seller.EditShopActivity"
             android:exported="true"/>
 
+        <activity android:name=".ui.user.ProductDetailActivity"
+            android:exported="false"/>
+
+        <activity android:name=".ui.admin.AdminActivity"
+            android:exported="false"/>
+
+        <activity android:name=".ui.admin.AdminSellerProductsActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

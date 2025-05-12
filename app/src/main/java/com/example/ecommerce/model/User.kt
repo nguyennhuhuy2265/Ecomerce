@@ -1,6 +1,8 @@
 package com.example.ecommerce.model
 
+import android.os.Parcelable
 import com.google.firebase.Timestamp
+import kotlinx.parcelize.Parcelize
 
 data class Address(
     val streetNumber: String? = null,

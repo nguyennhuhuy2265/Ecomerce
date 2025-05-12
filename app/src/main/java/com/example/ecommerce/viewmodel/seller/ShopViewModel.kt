@@ -42,7 +42,7 @@ class ShopViewModel : ViewModel() {
 
     fun logout() {
         viewModelScope.launch {
-            userRepository.loginWithEmail("", "") // Đăng xuất bằng email/password (cần điều chỉnh)
+            userRepository.logout()
             _logoutSuccess.value = true
         }
     }

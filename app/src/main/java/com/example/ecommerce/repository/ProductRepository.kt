@@ -77,4 +77,20 @@ class ProductRepository {
             false
         }
     }
+
+    suspend fun getProductById(productId: String): Result<Product> {
+        return try {
+            val snapshot = firestore.collection("products").document(productId).get().await()
+            val product = snapshot.toObject(Product::class.java)?.copy(id = snapshot.id)
+            if (product != null) {
+                Result.success(product)
+            } else {
+                Result.failure(Exception("Sản phẩm không tồn tại"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
 }

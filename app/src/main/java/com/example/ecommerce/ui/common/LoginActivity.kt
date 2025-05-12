@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.CommonActivityLoginBinding
+import com.example.ecommerce.ui.admin.AdminActivity
 import com.example.ecommerce.ui.component.LoadingHandler
 import com.example.ecommerce.ui.seller.SellerMainActivity
 import com.example.ecommerce.ui.user.UserMainActivity
@@ -76,6 +77,10 @@ class LoginActivity : AppCompatActivity() {
                     }
                     "seller" -> {
                         startActivity(Intent(this, SellerMainActivity::class.java))
+                        finish()
+                    }
+                    "admin" -> {
+                        startActivity(Intent(this, AdminActivity::class.java))
                         finish()
                     }
                     else -> {

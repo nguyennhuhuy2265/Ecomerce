@@ -8,6 +8,7 @@ data class Order(
     val sellerId: String,
     val items: List<OrderItem>,
     val totalAmount: Double,
+    val paymentStatus: PaymentStatus,
     val status: OrderStatus,
     val shippingAddress: Address? = null, // Thêm địa chỉ giao hàng
     val createdAt: Timestamp, // Đổi thành Timestamp
@@ -25,4 +26,8 @@ data class OrderItem(
 )
 enum class OrderStatus {
     PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELED
+}
+
+enum class PaymentStatus {
+    PENDING, PAID
 }
