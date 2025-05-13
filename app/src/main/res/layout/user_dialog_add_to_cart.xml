@@ -37,9 +37,10 @@
             android:id="@+id/btnDecrease"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:backgroundTint="@color/primary"
             android:text="-"
-            android:textSize="16sp"
-            android:padding="8dp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvQuantity"
@@ -53,6 +54,7 @@
             android:id="@+id/btnIncrease"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/primary"
             android:text="+"
             android:textSize="16sp"
             android:padding="8dp" />
@@ -68,6 +70,7 @@
         android:id="@+id/btnAddToCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary"
         android:text="Thêm vào giỏ hàng"
         android:textSize="16sp"
         android:padding="8dp"

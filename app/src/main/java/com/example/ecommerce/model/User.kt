@@ -27,6 +27,8 @@ data class User(
     val phoneNumber: String? = null, //Cả user và seller có thể có hoặc ko
     val rating: Double = 0.0, // Chỉ có nếu role = "seller"
     val reviewCount: Int = 0, // Chỉ có nếu role = "seller"
+    val revenue: Double = 0.0,
+    val soldCount: Int = 0,
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null
 )

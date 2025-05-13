@@ -82,6 +82,9 @@
 
         <activity android:name=".ui.admin.AdminSellerProductsActivity"
             android:exported="false"/>
+
+        <activity android:name=".ui.user.CheckoutActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

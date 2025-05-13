@@ -66,8 +66,8 @@ class ShopFragment : Fragment() {
 
             // Tải ảnh đại diện
             Glide.with(this)
-                .load(seller.avatarUrl?.ifEmpty { null } ?: R.drawable.ic_logo)
-                .placeholder(R.drawable.ic_logo)
+                .load(seller.avatarUrl?.ifEmpty { null } ?: R.drawable.ic_load)
+                .placeholder(R.drawable.ic_load)
                 .into(binding.ivAvatar)
         }
 

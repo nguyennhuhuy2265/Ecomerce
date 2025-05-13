@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -37,7 +38,14 @@ class CartActivity : AppCompatActivity() {
         cartAdapter = CartAdapter(
             onDeleteClick = { cartId -> viewModel.removeItemFromCart(cartId, userId) },
             onQuantityChange = { cartId, newQuantity -> viewModel.updateQuantity(cartId, newQuantity, userId) },
-            onBuyClick = { cart -> viewModel.createOrderFromCartItem(cart) }
+            onBuyClick = { cart ->
+                // Chuyển hướng đến CheckoutActivity
+                val intent = Intent(this, CheckoutActivity::class.java).apply {
+                    putExtra("cartItem", cart)
+                }
+                startActivity(intent)
+                viewModel.removeItemFromCart(cartId = cart.id, userId = userId)
+            }
         )
 
         setupToolbar()
@@ -68,9 +76,7 @@ class CartActivity : AppCompatActivity() {
             error?.let { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
         }
 
-        viewModel.orderActionResult.observe(this) { result ->
-            result?.let { Toast.makeText(this, "Đã tạo đơn hàng: $it", Toast.LENGTH_SHORT).show() }
-        }
+        // Loại bỏ observer cho orderActionResult vì không tạo đơn hàng ở đây nữa
     }
 
     private fun loadCart() {

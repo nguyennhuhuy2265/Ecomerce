@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -93,7 +94,6 @@ class ProductDetailActivity : AppCompatActivity() {
             val product = viewModel.product.value
             if (product != null) {
                 AddToCartDialog(this, product) { selectedOptions, quantity ->
-                    // Gọi logic thêm vào giỏ hàng (cần cập nhật ProductDetailViewModel)
                     viewModel.addToCart(product, selectedOptions, quantity)
                 }.show()
             } else {
@@ -102,7 +102,19 @@ class ProductDetailActivity : AppCompatActivity() {
         }
 
         binding.btnBuyNow.setOnClickListener {
-            Toast.makeText(this, "Mua ngay", Toast.LENGTH_SHORT).show()
+            val product = viewModel.product.value
+            if (product != null) {
+                AddToCartDialog(this, product) { selectedOptions, quantity ->
+                    val intent = Intent(this, CheckoutActivity::class.java).apply {
+                        putExtra("product", product)
+                        putExtra("quantity", quantity)
+                        putStringArrayListExtra("selectedOptions", ArrayList(selectedOptions))
+                    }
+                    startActivity(intent)
+                }.show()
+            } else {
+                Toast.makeText(this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnViewShop.setOnClickListener {

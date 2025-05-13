@@ -108,8 +108,8 @@ class EditShopActivity : AppCompatActivity() {
                 binding.etCountry.setText("")
             }
             Glide.with(this)
-                .load(user.avatarUrl?.ifEmpty { null } ?: R.drawable.ic_logo)
-                .placeholder(R.drawable.ic_logo)
+                .load(user.avatarUrl?.ifEmpty { null } ?: R.drawable.ic_load)
+                .placeholder(R.drawable.ic_load)
                 .into(binding.ivSellerAvatar)
         }
 
@@ -140,7 +140,7 @@ class EditShopActivity : AppCompatActivity() {
                     if (imageUrl != null) {
                         Glide.with(this)
                             .load(imageUrl)
-                            .placeholder(R.drawable.ic_logo)
+                            .placeholder(R.drawable.ic_load)
                             .into(binding.ivSellerAvatar)
                         editShopViewModel.updateAvatar(imageUrl)
                     }

@@ -1,5 +1,6 @@
 package com.example.ecommerce.adapter.user
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.UserItemCartBinding
 import com.example.ecommerce.model.Cart
+import com.example.ecommerce.ui.user.CheckoutActivity
 
 class CartAdapter(
     private val onDeleteClick: (String) -> Unit,
