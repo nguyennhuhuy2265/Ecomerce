@@ -55,6 +55,19 @@ class OrderFragment : Fragment() {
         setupTabLayout()
         setupObservers()
         viewModel.loadOrdersBySeller(sellerId)
+
+        val selectedStatus = arguments?.getString("selectedStatus")
+        if (selectedStatus != null) {
+            val status = OrderStatus.valueOf(selectedStatus)
+            val tabIndex = when (status) {
+                OrderStatus.PENDING -> 1
+                OrderStatus.CONFIRMED -> 2
+                OrderStatus.SHIPPING -> 3
+                OrderStatus.DELIVERED -> 4
+                OrderStatus.CANCELED -> 5
+            }
+            binding.tabLayoutOrders.getTabAt(tabIndex)?.select()
+        }
     }
 
     private fun setupRecyclerView() {
