@@ -132,6 +132,7 @@ class ProductViewModel : ViewModel() {
         var filteredList = _products.value.orEmpty()
 
         filteredList = when (currentFilter) {
+            "active" -> filteredList.filter { it.stock > 0 }
             "out_of_stock" -> filteredList.filter { it.stock == 0 }
             else -> filteredList
         }
