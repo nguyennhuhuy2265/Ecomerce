@@ -94,6 +94,7 @@ class ShopFragment : Fragment() {
         // Xử lý nút đăng xuất
         binding.btnLogout.setOnClickListener {
             viewModel.logout()
+            startActivity(Intent(this.context, LoginActivity::class.java))
         }
 
         binding.btnRefresh.setOnClickListener {
