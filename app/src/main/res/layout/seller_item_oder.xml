@@ -52,7 +52,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_logo" />
+                android:src="@drawable/ic_load" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="Tên sản phẩm mẫu với tên dài để thử nghiệm hiển thị"
+                    android:text="Tên sản phẩm mẫu "
                     android:textSize="14sp" />
 
                 <TextView
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="150.000đ"
-                    android:textColor="@android:color/holo_red_light"
+                    android:textColor="@color/primary_dark"
                     android:textSize="14sp" />
 
                 <TextView
@@ -111,7 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="300.000đ"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@color/primary_dark"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -145,16 +145,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/buttonUpdateStatus"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:backgroundTint="@android:color/holo_orange_light"
-                android:text="Xác nhận đơn"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

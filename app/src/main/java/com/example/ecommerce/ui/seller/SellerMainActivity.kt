@@ -18,7 +18,7 @@ class SellerMainActivity : AppCompatActivity() {
     private val fragments = mapOf(
         SellerMainViewModel.Tab.DASHBOARD to DashboardFragment(),
         SellerMainViewModel.Tab.PRODUCT to ProductFragment(),
-        SellerMainViewModel.Tab.ODER to OderFragment(),
+        SellerMainViewModel.Tab.ODER to OrderFragment(),
         SellerMainViewModel.Tab.NOTIFICATION to NotificationFragment(),
         SellerMainViewModel.Tab.SHOP to ShopFragment()
     )
