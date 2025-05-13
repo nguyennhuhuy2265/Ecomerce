@@ -1,6 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+
+    <!-- Icon thông báo -->
+    <ImageView
+        android:id="@+id/ivNotificationType"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="12dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_cart1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Tiêu đề thông báo -->
+    <TextView
+        android:id="@+id/tvNotificationTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tvNotificationTime"
+        app:layout_constraintStart_toEndOf="@+id/ivNotificationType"
+        app:layout_constraintTop_toTopOf="@+id/ivNotificationType"
+        tools:text="Đơn hàng #123456 đã được xác nhận" />
+
+    <!-- Nội dung thông báo -->
+    <TextView
+        android:id="@+id/tvNotificationBody"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvNotificationTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvNotificationTitle"
+        tools:text="Đơn hàng của bạn đã được xác nhận và đang được chuẩn bị. Dự kiến sẽ được giao trong 3-5 ngày tới." />
+
+    <!-- Thời gian thông báo -->
+    <TextView
+        android:id="@+id/tvNotificationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_dark"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvNotificationTitle"
+        tools:text="2 giờ trước" />
+
+    <!-- Order ID (nếu cần hiển thị) -->
+    <TextView
+        android:id="@+id/tvOrderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/accent"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@+id/tvNotificationBody"
+        app:layout_constraintTop_toBottomOf="@+id/tvNotificationBody"
+        tools:text="Mã đơn hàng: #123456" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/gray_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOrderId" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

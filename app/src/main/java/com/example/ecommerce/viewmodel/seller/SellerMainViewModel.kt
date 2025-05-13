@@ -22,6 +22,4 @@ class SellerMainViewModel : ViewModel() {
     fun selectTab(tab: Tab) {
         _selectedTab.value = tab
     }
-
-
 }

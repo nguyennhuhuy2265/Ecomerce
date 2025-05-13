@@ -18,8 +18,8 @@ class NotificationRepository {
                 title = title,
                 body = body,
                 createdAt = Timestamp.now(),
-                isRead = false,
-                orderId = orderId // Lưu orderId vào thông báo
+                read = false,
+                orderId = orderId
             )
             notificationsCollection.document(notification.id).set(notification).await()
         } catch (e: Exception) {

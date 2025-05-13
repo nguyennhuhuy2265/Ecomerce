@@ -96,7 +96,7 @@ class CheckoutViewModel : ViewModel() {
                     notificationRepository.sendNotification(
                         userId = userId,
                         title = "Đặt hàng thành công",
-                        body = "Đơn hàng của bạn (Mã: $orderId) đã được đặt. Vui lòng theo dõi trạng thái.",
+                        body = "Đơn hàng của bạn Mã: $orderId đã được đặt. Vui lòng theo dõi trạng thái.",
                         orderId = orderId
                     )
 
@@ -104,7 +104,7 @@ class CheckoutViewModel : ViewModel() {
                     notificationRepository.sendNotification(
                         userId = cart.sellerId,
                         title = "Đơn hàng mới",
-                        body = "Bạn có đơn hàng mới (Mã: $orderId) từ người dùng $userId.",
+                        body = "Bạn có đơn hàng mới Mã: $orderId từ người dùng $userId.",
                         orderId = orderId
                     )
 
