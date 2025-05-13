@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 import kotlinx.parcelize.Parcelize
 
 data class Address(
+    val phoneNumber: String? = null,
     val streetNumber: String? = null,
     val streetName: String? = null,
     val ward: String? = null,

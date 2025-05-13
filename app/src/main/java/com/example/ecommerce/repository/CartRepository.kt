@@ -21,4 +21,32 @@ class CartRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getCartsByUserId(userId: String): Result<List<Cart>> {
+        return try {
+            val snapshot = cartsCollection.whereEqualTo("userId", userId).get().await()
+            val carts = snapshot.documents.mapNotNull { it.toObject(Cart::class.java) }
+            Result.success(carts)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateItemInCart(cartId: String, cart: Cart): Result<Unit> {
+        return try {
+            cartsCollection.document(cartId).set(cart, SetOptions.merge()).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun removeItemFromCart(cartId: String): Result<Unit> {
+        return try {
+            cartsCollection.document(cartId).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

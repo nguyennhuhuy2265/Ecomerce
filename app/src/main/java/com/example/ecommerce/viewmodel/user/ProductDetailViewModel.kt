@@ -11,8 +11,8 @@ import com.example.ecommerce.model.Product
 import com.example.ecommerce.model.Review
 import com.example.ecommerce.model.User
 import com.example.ecommerce.repository.CartRepository
+import com.example.ecommerce.repository.OrderRepository
 import com.example.ecommerce.repository.ReviewRepository
-import com.example.ecommerce.repository.common.OrderRepository
 import com.example.ecommerce.repository.common.ProductRepository
 import com.example.ecommerce.repository.common.UserRepository
 import com.google.firebase.auth.FirebaseAuth

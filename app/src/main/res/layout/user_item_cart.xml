@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+<!--        &lt;!&ndash; Store Name &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/textStoreName"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:drawableStart="@drawable/ic_store"-->
+<!--            android:drawablePadding="4dp"-->
+<!--            android:textColor="#333333"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:text="Shop Thời Trang ABC" />-->
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/dividerStore"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#EEEEEE"
+            tools:ignore="MissingConstraints" />
+
+
+
+        <ImageView
+            android:id="@+id/imageProduct"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toBottomOf="@id/dividerStore"
+            tools:src="@drawable/ic_load"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textProductName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageProduct"
+            app:layout_constraintTop_toTopOf="@id/imageProduct"
+            tools:text="Áo Thun Nam Cotton Cao Cấp Cổ Tròn" />
+
+        <TextView
+            android:id="@+id/textProductOptions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#777777"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageProduct"
+            app:layout_constraintTop_toBottomOf="@id/textProductName"
+            tools:text="Phân loại: Trắng, Size L" />
+
+        <TextView
+            android:id="@+id/textProductPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/primary_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageProduct"
+            app:layout_constraintStart_toEndOf="@id/imageProduct"
+            tools:text="250.000₫" />
+
+        <!-- Quantity Controls -->
+        <LinearLayout
+            android:id="@+id/layoutQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_quantity_control"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/imageProduct"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/buttonDecrease"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Giảm"
+                android:src="@drawable/ic_remove" />
+
+            <TextView
+                android:id="@+id/textQuantity"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="1" />
+
+            <ImageButton
+                android:id="@+id/buttonIncrease"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Tăng"
+                android:src="@drawable/ic_increase" />
+        </LinearLayout>
+
+        <!-- Options below product (delete, move to wishlist) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageProduct">
+
+            <TextView
+                android:id="@+id/buttonDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawableStart="@drawable/ic_delete"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:text="Xóa"
+                android:textColor="@color/error"
+                android:drawableTint="@color/error"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/buttonBuy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawableStart="@drawable/ic_cart"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/primary_dark"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:text="Mua hàng"
+                android:textColor="@color/primary_dark"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
