@@ -169,6 +169,7 @@ class UserRepository {
         }
     }
 
+    fun getCurrentUserId(): String? = auth.currentUser?.uid
 
 
 
