@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerce.adapter.seller.NotificationAdapter
 import com.example.ecommerce.databinding.UserFragmentNotificationBinding
 import com.example.ecommerce.repository.NotificationRepository
-import com.example.ecommerce.ui.seller.OrderDetailActivity
 import com.example.ecommerce.viewmodel.seller.NotificationViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth

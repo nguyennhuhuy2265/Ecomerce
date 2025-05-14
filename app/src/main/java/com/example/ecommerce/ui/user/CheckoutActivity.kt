@@ -1,16 +1,23 @@
 package com.example.ecommerce.ui.user
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerce.R
 import com.example.ecommerce.adapter.user.CheckoutItemAdapter
 import com.example.ecommerce.databinding.UserActivityCheckoutBinding
 import com.example.ecommerce.model.Address
+import com.example.ecommerce.model.Card
 import com.example.ecommerce.model.Cart
 import com.example.ecommerce.model.PaymentStatus
 import com.example.ecommerce.model.Product
@@ -25,6 +32,8 @@ class CheckoutActivity : AppCompatActivity() {
     private lateinit var userId: String
     private var selectedQuantity: Int = 1
     private var selectedOptions: List<String> = emptyList()
+    private var isUsingSavedCard: Boolean = true // Biến để theo dõi nếu dùng thẻ đã lưu
+    private var isAddressFormOpen: Boolean = false // Biến để theo dõi trạng thái form địa chỉ
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +54,9 @@ class CheckoutActivity : AppCompatActivity() {
         setupObservers()
         setupListeners()
         loadData()
+
+        // Mặc định ẩn form thẻ vì rbCashOnDelivery được chọn
+        binding.layoutCardInfo.visibility = View.GONE
     }
 
     private fun setupToolbar() {
@@ -61,15 +73,31 @@ class CheckoutActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.user.observe(this) { user ->
             user?.let {
-                if (it.address != null) {
+                // Hiển thị địa chỉ giao hàng
+                if (it.address != null && !isAddressFormOpen) {
                     binding.layoutExistingAddress.visibility = View.VISIBLE
                     binding.layoutAddressForm.visibility = View.GONE
                     binding.tvRecipientName.text = it.name
-                    binding.tvPhoneNumber.text = it.address.phoneNumber ?: "Chưa có số điện thoại"
+                    val phone = it.address?.phoneNumber ?: it.phoneNumber
+                    binding.tvPhoneNumber.text = phone?.let { "$it" } ?: "Chưa có số điện thoại"
                     binding.tvAddress.text = "${it.address.streetNumber} ${it.address.streetName}, ${it.address.ward}, ${it.address.district}, ${it.address.city}"
                 } else {
                     binding.layoutExistingAddress.visibility = View.GONE
                     binding.layoutAddressForm.visibility = View.VISIBLE
+                }
+
+                // Hiển thị thông tin thẻ nếu có
+                if (it.card != null && binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCreditCard) {
+                    binding.layoutSavedCard.visibility = View.VISIBLE
+                    binding.layoutCardForm.visibility = View.GONE
+                    isUsingSavedCard = true
+                    binding.tvBankName.text = it.card.bankName
+                    binding.tvCardNumber.text = "**** **** **** ${it.card.cardNumber.takeLast(4)}"
+                    binding.tvCardHolder.text = it.card.cardHolderName
+                } else if (binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCreditCard) {
+                    binding.layoutSavedCard.visibility = View.GONE
+                    binding.layoutCardForm.visibility = View.VISIBLE
+                    isUsingSavedCard = false
                 }
             }
         }
@@ -98,6 +126,54 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        // Xử lý thay đổi địa chỉ
+        binding.tvChangeAddress.setOnClickListener {
+            if (!isAddressFormOpen && viewModel.user.value?.address != null) {
+                // Mở form nhập địa chỉ
+                binding.layoutExistingAddress.visibility = View.GONE
+                binding.layoutAddressForm.visibility = View.VISIBLE
+                isAddressFormOpen = true
+                binding.tvChangeAddress.text = "Hủy thay đổi"
+            } else {
+                // Đóng form và hiển thị địa chỉ cũ
+                binding.layoutExistingAddress.visibility = View.VISIBLE
+                binding.layoutAddressForm.visibility = View.GONE
+                isAddressFormOpen = false
+                binding.tvChangeAddress.text = "Thay đổi địa chỉ"
+            }
+        }
+
+        // Xử lý thay đổi thẻ
+        binding.tvChangeCard.setOnClickListener {
+            binding.layoutSavedCard.visibility = View.GONE
+            binding.layoutCardForm.visibility = View.VISIBLE
+            isUsingSavedCard = false
+        }
+
+        // Xử lý chọn phương thức thanh toán
+        binding.rgPaymentMethods.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.rbCreditCard) {
+                binding.layoutCardInfo.visibility = View.VISIBLE
+                viewModel.user.value?.let { user ->
+                    if (user.card != null) {
+                        binding.layoutSavedCard.visibility = View.VISIBLE
+                        binding.layoutCardForm.visibility = View.GONE
+                        isUsingSavedCard = true
+                        binding.tvBankName.text = user.card.bankName
+                        binding.tvCardNumber.text = "**** **** **** ${user.card.cardNumber.takeLast(4)}"
+                        binding.tvCardHolder.text = user.card.cardHolderName
+                    } else {
+                        binding.layoutSavedCard.visibility = View.GONE
+                        binding.layoutCardForm.visibility = View.VISIBLE
+                        isUsingSavedCard = false
+                    }
+                }
+            } else {
+                binding.layoutCardInfo.visibility = View.GONE
+            }
+        }
+
+        // Xử lý đặt hàng
         binding.btnPlaceOrder.setOnClickListener {
             val paymentStatus = if (binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCashOnDelivery) {
                 PaymentStatus.PENDING
@@ -126,13 +202,76 @@ class CheckoutActivity : AppCompatActivity() {
                 }
             }
 
-            if (address != null) {
-                viewModel.placeOrder(userId, paymentStatus, address)
-            } else {
+            if (address == null) {
                 Toast.makeText(this, "Vui lòng điền đầy đủ địa chỉ", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Xử lý thông tin thẻ nếu chọn thanh toán bằng thẻ
+            if (binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCreditCard && !isUsingSavedCard) {
+                val card = Card(
+                    bankName = binding.etBankName.text.toString(),
+                    cardNumber = binding.etCardNumber.text.toString(),
+                    cardHolderName = binding.etCardHolderName.text.toString(),
+                    expiryDate = binding.etExpiryDate.text.toString(),
+                    cvv = binding.etCVV.text.toString()
+                ).takeIf {
+                    it.bankName.isNotEmpty() &&
+                            it.cardNumber.isNotEmpty() &&
+                            it.cardHolderName.isNotEmpty() &&
+                            it.expiryDate.isNotEmpty() &&
+                            it.cvv.isNotEmpty()
+                }
+
+                if (card == null) {
+                    Toast.makeText(this, "Vui lòng điền đầy đủ thông tin thẻ", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Cập nhật thẻ vào user trước khi đặt hàng
+                viewModel.user.value?.let { user ->
+                    val updatedUser = user.copy(card = card)
+                    viewModel.updateUser(updatedUser)
+                }
+            }
+
+            // Nếu chọn thanh toán bằng thẻ, hiển thị dialog xác nhận
+            if (binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCreditCard) {
+                showPaymentConfirmationDialog(paymentStatus, address)
+            } else {
+                viewModel.placeOrder(userId, paymentStatus, address)
             }
         }
     }
+
+    private fun showPaymentConfirmationDialog(paymentStatus: PaymentStatus, address: Address) {
+        val cardNumber = binding.tvCardNumber.text ?: binding.etCardNumber.text
+        val message = "Bạn có chắc chắn muốn sử dụng thẻ $cardNumber để thanh toán số tiền ${binding.tvTotalAmount.text}?"
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Xác nhận thanh toán")
+            .setMessage(message)
+            .setPositiveButton("Xác nhận") { _, _ ->
+                viewModel.placeOrder(userId, paymentStatus, address)
+            }
+            .setNegativeButton("Hủy") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .create()
+
+        dialog.setOnShowListener {
+            // Bo góc dialog
+            dialog.window?.setBackgroundDrawableResource(R.drawable.bg_filter_normal)
+
+            // Đổi màu nút (ví dụ: xanh dương cho xác nhận, xám cho hủy)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ContextCompat.getColor(this, R.color.primary))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(ContextCompat.getColor(this, R.color.gray_dark))
+        }
+
+        dialog.show()
+    }
+
 
     private fun loadData() {
         viewModel.loadUser(userId)

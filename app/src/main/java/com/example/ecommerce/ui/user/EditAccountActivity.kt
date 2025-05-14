@@ -85,8 +85,8 @@ class EditAccountActivity : AppCompatActivity() {
             user?.let {
                 binding.etName.setText(it.name)
                 binding.etEmail.setText(it.email)
-                binding.etPhone.setText(it.phoneNumber ?: "")
                 it.address?.let { address ->
+                    binding.etPhone.setText(it.phoneNumber ?: "")
                     binding.etStreetNumber.setText(address.streetNumber ?: "")
                     binding.etStreetName.setText(address.streetName ?: "")
                     binding.etWard.setText(address.ward ?: "")
@@ -157,8 +157,8 @@ class EditAccountActivity : AppCompatActivity() {
         binding.btnUpdate.setOnClickListener {
             val updatedUser = viewModel.user.value?.copy(
                 name = binding.etName.text.toString(),
-                phoneNumber = binding.etPhone.text.toString(),
                 address = Address(
+                    phoneNumber = binding.etPhone.text.toString(),
                     streetNumber = binding.etStreetNumber.text.toString(),
                     streetName = binding.etStreetName.text.toString(),
                     ward = binding.etWard.text.toString(),

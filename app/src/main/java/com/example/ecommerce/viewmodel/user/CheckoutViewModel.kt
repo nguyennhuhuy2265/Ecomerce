@@ -64,13 +64,18 @@ class CheckoutViewModel : ViewModel() {
         _checkoutItems.value = listOf(cart)
     }
 
-    fun placeOrder(userId: String, paymentStatus: PaymentStatus, address: Address?) {
+    fun updateUser(user: User) {
         viewModelScope.launch {
-            if (address == null) {
-                _error.value = "Địa chỉ không hợp lệ"
-                return@launch
+            userRepository.updateUser(user).onSuccess {
+                _user.value = user
+            }.onFailure { e ->
+                _error.value = e.message ?: "Lỗi khi cập nhật thông tin người dùng"
             }
+        }
+    }
 
+    fun placeOrder(userId: String, paymentStatus: PaymentStatus, address: Address) {
+        viewModelScope.launch {
             val items = _checkoutItems.value ?: return@launch
 
             items.forEach { cart ->
@@ -84,7 +89,7 @@ class CheckoutViewModel : ViewModel() {
                     unitPrice = cart.unitPrice,
                     quantity = cart.quantity,
                     selectedOptions = cart.selectedOptions,
-                    totalAmount = cart.unitPrice * cart.quantity,
+                    totalAmount = cart.unitPrice * cart.quantity + 30000.0, // Thêm phí vận chuyển
                     paymentStatus = paymentStatus,
                     status = OrderStatus.PENDING,
                     shippingAddress = address,
@@ -116,6 +121,12 @@ class CheckoutViewModel : ViewModel() {
                             updatedAt = Timestamp.now()
                         )
                         userRepository.updateUser(updatedSeller)
+                    }
+
+                    // Cập nhật địa chỉ vào thông tin người dùng nếu người dùng nhập địa chỉ mới
+                    if (_user.value?.address == null) {
+                        val updatedUser = _user.value?.copy(address = address)
+                        updatedUser?.let { userRepository.updateUser(it) }
                     }
 
                     _orderActionResult.value = orderId

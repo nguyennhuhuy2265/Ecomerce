@@ -89,8 +89,8 @@ class OrderDetailActivity : AppCompatActivity() {
         binding.tvQuantity.text = order.quantity.toString()
         binding.tvTotalAmount.text = "₫${order.totalAmount.toInt()}"
         binding.tvPaymentStatus.text = when (order.paymentStatus) {
-            PaymentStatus.PENDING -> "Chưa thanh toán"
-            PaymentStatus.PAID -> "Đã thanh toán"
+            PaymentStatus.PENDING -> "Thanh toán bằng tiền mặt"
+            PaymentStatus.PAID -> "Đã thanh toán bằng thẻ"
         }
         binding.tvPaymentStatus.setTextColor(ContextCompat.getColor(this, when (order.paymentStatus) {
             PaymentStatus.PENDING -> android.R.color.holo_orange_dark
