@@ -57,12 +57,21 @@ class OrderDetailActivity : AppCompatActivity() {
         }
 
         viewModel.updateResult.observe(this) { result ->
-            result?.let { Toast.makeText(this, "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show() }
+            result?.let {
+                Toast.makeText(
+                    this,
+                    when (viewModel.order.value?.status) {
+                        OrderStatus.SHIPPING -> "Đã chuyển sang trạng thái Đang giao"
+                        OrderStatus.DELIVERED -> "Đã chuyển sang trạng thái Hoàn thành"
+                        else -> "Cập nhật trạng thái thành công"
+                    },
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
     private fun setupListeners() {
-
         binding.btnConfirm.setOnClickListener {
             viewModel.updateOrderStatus(orderId!!, OrderStatus.CONFIRMED)
         }
@@ -89,8 +98,8 @@ class OrderDetailActivity : AppCompatActivity() {
         binding.tvQuantity.text = order.quantity.toString()
         binding.tvTotalAmount.text = "₫${order.totalAmount.toInt()}"
         binding.tvPaymentStatus.text = when (order.paymentStatus) {
-            PaymentStatus.PENDING -> "Thanh toán bằng tiền mặt"
-            PaymentStatus.PAID -> "Đã thanh toán bằng thẻ"
+            PaymentStatus.PENDING -> "Chưa thanh toán"
+            PaymentStatus.PAID -> "Đã thanh toán "
         }
         binding.tvPaymentStatus.setTextColor(ContextCompat.getColor(this, when (order.paymentStatus) {
             PaymentStatus.PENDING -> android.R.color.holo_orange_dark
