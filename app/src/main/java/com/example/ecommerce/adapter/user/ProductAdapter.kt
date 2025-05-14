@@ -23,7 +23,7 @@ class ProductAdapter(
             binding.tvProductName.text = product.name
             val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN"))
             binding.tvPrice.text = "₫${formatter.format(product.price)}"
-            binding.tvRating.text = "${product.rating} (${product.reviewCount})"
+            binding.tvRating.text = "${product.rating} (${product.reviewCount} lượt)"
             binding.tvSold.text = "Đã bán ${product.soldCount}"
             binding.tvShopLocation.text = product.shopLocation ?: "Không xác định"
             val imageUrl = product.imageUrls.firstOrNull() ?: ""
