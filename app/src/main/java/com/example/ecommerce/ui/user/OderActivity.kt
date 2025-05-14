@@ -14,6 +14,16 @@ class OrderActivity : AppCompatActivity() {
         binding = UserActivityOrderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Thiết lập Toolbar
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // Xử lý nút back trên Toolbar
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         // Thêm OrderFragment vào Activity
         val fragment = OrderFragment().apply {
             arguments = Bundle().apply {

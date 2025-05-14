@@ -1,5 +1,6 @@
 package com.example.ecommerce.ui.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +33,11 @@ class OrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        orderAdapter = OrderAdapter(emptyList()) { order ->
-            // Chuyển đến chi tiết đơn hàng nếu cần
-            // Ví dụ: startActivity(Intent(context, OrderDetailActivity::class.java).apply { putExtra("orderId", order.id) })
+        // Khởi tạo orderAdapter
+        orderAdapter = OrderAdapter { order ->
+            startActivity(Intent(context, OrderDetailActivity::class.java).apply {
+                putExtra("orderId", order.id)
+            })
         }
 
         setupRecyclerView()
@@ -100,7 +103,7 @@ class OrderFragment : Fragment() {
 
     private fun filterOrdersByStatus(status: OrderStatus?, orders: List<Order>) {
         val filteredOrders = if (status == null) orders else orders.filter { it.status == status }
-        orderAdapter.updateOrders(filteredOrders)
+        orderAdapter.submitList(filteredOrders) // Sử dụng submitList thay vì updateOrders
         binding.textViewNoOrders.visibility = if (filteredOrders.isEmpty()) View.VISIBLE else View.GONE
     }
 

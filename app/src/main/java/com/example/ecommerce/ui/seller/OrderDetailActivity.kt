@@ -92,6 +92,10 @@ class OrderDetailActivity : AppCompatActivity() {
             PaymentStatus.PENDING -> "Chưa thanh toán"
             PaymentStatus.PAID -> "Đã thanh toán"
         }
+        binding.tvPaymentStatus.setTextColor(ContextCompat.getColor(this, when (order.paymentStatus) {
+            PaymentStatus.PENDING -> android.R.color.holo_orange_dark
+            PaymentStatus.PAID -> android.R.color.holo_green_dark
+        }))
         binding.tvShippingAddress.text = order.shippingAddress?.let {
             "${it.streetNumber} ${it.streetName}, ${it.ward}, ${it.district}, ${it.city}, ${it.country}"
         } ?: "Không có địa chỉ"
@@ -112,7 +116,7 @@ class OrderDetailActivity : AppCompatActivity() {
         binding.tvOrderStatus.setTextColor(ContextCompat.getColor(this, when (order.status) {
             OrderStatus.PENDING -> android.R.color.holo_orange_dark
             OrderStatus.CONFIRMED -> android.R.color.holo_blue_dark
-            OrderStatus.SHIPPING -> android.R.color.holo_green_dark
+            OrderStatus.SHIPPING -> android.R.color.holo_green_light
             OrderStatus.DELIVERED -> android.R.color.holo_green_dark
             OrderStatus.CANCELED -> android.R.color.holo_red_dark
         }))
