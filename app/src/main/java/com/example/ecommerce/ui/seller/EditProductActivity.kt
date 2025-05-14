@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +19,7 @@ import com.example.ecommerce.R
 import com.example.ecommerce.adapter.seller.ProductImageAdapter
 import com.example.ecommerce.databinding.SellerActivityProductFormBinding
 import com.example.ecommerce.model.Category
+import com.example.ecommerce.model.OptionGroup
 import com.example.ecommerce.model.Product
 import com.example.ecommerce.repository.common.ImageUploadRepository
 import com.example.ecommerce.repository.common.UploadStatus
@@ -27,6 +27,7 @@ import com.example.ecommerce.viewmodel.common.ImageUploadViewModel
 import com.example.ecommerce.viewmodel.seller.ProductViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.UUID
 
 class EditProductActivity : AppCompatActivity() {
     private lateinit var binding: SellerActivityProductFormBinding
@@ -126,11 +127,32 @@ class EditProductActivity : AppCompatActivity() {
             Toast.makeText(this, "Cập nhật sản phẩm thất bại: $error", Toast.LENGTH_SHORT).show()
         }
 
+        // Hiển thị thông tin sản phẩm
         binding.etProductName.setText(product.name)
         binding.etProductDescription.setText(product.description)
         binding.etProductPrice.setText(product.price.toString())
         binding.etProductStock.setText(product.stock.toString())
         binding.etProductLocation.setText(product.shopLocation)
+
+        // Hiển thị các option groups hiện có
+        product.optionGroups.getOrNull(0)?.let { group ->
+            binding.etOptionGroup1.setText(group.name)
+            group.values.getOrNull(0)?.let { binding.etOption1Value1.setText(it) }
+            group.values.getOrNull(1)?.let { binding.etOption1Value2.setText(it) }
+            group.values.getOrNull(2)?.let { binding.etOption1Value3.setText(it) }
+        }
+        product.optionGroups.getOrNull(1)?.let { group ->
+            binding.etOptionGroup2.setText(group.name)
+            group.values.getOrNull(0)?.let { binding.etOption2Value1.setText(it) }
+            group.values.getOrNull(1)?.let { binding.etOption2Value2.setText(it) }
+            group.values.getOrNull(2)?.let { binding.etOption2Value3.setText(it) }
+        }
+        product.optionGroups.getOrNull(2)?.let { group ->
+            binding.etOptionGroup3.setText(group.name)
+            group.values.getOrNull(0)?.let { binding.etOption3Value1.setText(it) }
+            group.values.getOrNull(1)?.let { binding.etOption3Value2.setText(it) }
+            group.values.getOrNull(2)?.let { binding.etOption3Value3.setText(it) }
+        }
 
         binding.btnSaveProduct.setOnClickListener {
             updateProduct()
@@ -170,6 +192,67 @@ class EditProductActivity : AppCompatActivity() {
         val stockText = binding.etProductStock.text.toString().trim()
         val location = binding.etProductLocation.text.toString().trim()
 
+        // Lấy dữ liệu option groups
+        val optionGroups = mutableListOf<OptionGroup>()
+
+        // Option Group 1
+        val optionGroup1Name = binding.etOptionGroup1.text.toString().trim()
+        if (optionGroup1Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption1Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption1Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption1Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = product.optionGroups.getOrNull(0)?.id ?: UUID.randomUUID().toString(),
+                        name = optionGroup1Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Option Group 2
+        val optionGroup2Name = binding.etOptionGroup2.text.toString().trim()
+        if (optionGroup2Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption2Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption2Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption2Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = product.optionGroups.getOrNull(1)?.id ?: UUID.randomUUID().toString(),
+                        name = optionGroup2Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Option Group 3
+        val optionGroup3Name = binding.etOptionGroup3.text.toString().trim()
+        if (optionGroup3Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption3Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption3Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption3Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = product.optionGroups.getOrNull(2)?.id ?: UUID.randomUUID().toString(),
+                        name = optionGroup3Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Kiểm tra dữ liệu bắt buộc
         if (name.isEmpty() || description.isEmpty() || categoryName.isEmpty() ||
             priceText.isEmpty() || stockText.isEmpty()) {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
@@ -198,7 +281,8 @@ class EditProductActivity : AppCompatActivity() {
             price = price,
             stock = stock,
             imageUrls = imageUrls,
-            shopLocation = location
+            shopLocation = location,
+            optionGroups = optionGroups // Cập nhật optionGroups
         )
 
         productViewModel.updateProduct(updatedProduct)
@@ -212,4 +296,3 @@ class EditProductActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
-

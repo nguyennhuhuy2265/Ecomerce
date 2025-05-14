@@ -19,6 +19,7 @@ import com.example.ecommerce.R
 import com.example.ecommerce.adapter.seller.ProductImageAdapter
 import com.example.ecommerce.databinding.SellerActivityProductFormBinding
 import com.example.ecommerce.model.Category
+import com.example.ecommerce.model.OptionGroup
 import com.example.ecommerce.model.Product
 import com.example.ecommerce.repository.common.ImageUploadRepository
 import com.example.ecommerce.repository.common.UploadStatus
@@ -27,6 +28,7 @@ import com.example.ecommerce.viewmodel.seller.ProductViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.UUID
 
 class AddProductActivity : AppCompatActivity() {
     private lateinit var binding: SellerActivityProductFormBinding
@@ -158,6 +160,67 @@ class AddProductActivity : AppCompatActivity() {
         val stockText = binding.etProductStock.text.toString().trim()
         val location = binding.etProductLocation.text.toString().trim()
 
+        // Lấy dữ liệu option groups
+        val optionGroups = mutableListOf<OptionGroup>()
+
+        // Option Group 1
+        val optionGroup1Name = binding.etOptionGroup1.text.toString().trim()
+        if (optionGroup1Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption1Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption1Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption1Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = UUID.randomUUID().toString(),
+                        name = optionGroup1Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Option Group 2
+        val optionGroup2Name = binding.etOptionGroup2.text.toString().trim()
+        if (optionGroup2Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption2Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption2Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption2Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = UUID.randomUUID().toString(),
+                        name = optionGroup2Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Option Group 3
+        val optionGroup3Name = binding.etOptionGroup3.text.toString().trim()
+        if (optionGroup3Name.isNotEmpty()) {
+            val values = listOfNotNull(
+                binding.etOption3Value1.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption3Value2.text.toString().trim().takeIf { it.isNotEmpty() },
+                binding.etOption3Value3.text.toString().trim().takeIf { it.isNotEmpty() }
+            )
+            if (values.isNotEmpty()) {
+                optionGroups.add(
+                    OptionGroup(
+                        id = UUID.randomUUID().toString(),
+                        name = optionGroup3Name,
+                        values = values
+                    )
+                )
+            }
+        }
+
+        // Kiểm tra dữ liệu bắt buộc
         if (name.isEmpty() || description.isEmpty() || categoryName.isEmpty() ||
             priceText.isEmpty() || stockText.isEmpty()) {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
@@ -195,7 +258,8 @@ class AddProductActivity : AppCompatActivity() {
             stock = stock,
             imageUrls = imageUrls,
             shopLocation = location,
-            createdAt = Timestamp.now()
+            createdAt = Timestamp.now(),
+            optionGroups = optionGroups // Thêm optionGroups vào product
         )
 
         productViewModel.addProduct(product)
@@ -209,4 +273,3 @@ class AddProductActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
-
