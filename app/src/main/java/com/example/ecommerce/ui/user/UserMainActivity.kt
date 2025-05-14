@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ecommerce.AccountFragment
-import com.example.ecommerce.CategoryFragment
 import com.example.ecommerce.R
 import com.example.ecommerce.databinding.UserActivityMainBinding
 import com.example.ecommerce.viewmodel.user.UserMainViewModel

@@ -24,7 +24,7 @@ class ProductAdapter(
             val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN"))
             binding.tvPrice.text = "₫${formatter.format(product.price)}"
             binding.tvRating.text = "${product.rating} (${product.reviewCount})"
-            binding.tvSold.text = "Đã bán ${product.soldCount}k"
+            binding.tvSold.text = "Đã bán ${product.soldCount}"
             binding.tvShopLocation.text = product.shopLocation ?: "Không xác định"
             val imageUrl = product.imageUrls.firstOrNull() ?: ""
             Glide.with(binding.ivProductImage.context)

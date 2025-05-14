@@ -73,6 +73,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 Glide.with(this)
                     .load(it.avatarUrl ?: R.drawable.ic_logo)
                     .placeholder(R.drawable.ic_logo)
+                    .circleCrop()
                     .into(binding.ivShopAvatar)
             }
         }

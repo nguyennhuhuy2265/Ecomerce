@@ -38,16 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp" />
 
-<!--            &lt;!&ndash; TabLayout for Image Slider Dots &ndash;&gt;-->
-<!--            <com.google.android.material.tabs.TabLayout-->
-<!--                android:id="@+id/tabLayout"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:tabGravity="center"-->
-<!--                app:tabIndicatorColor="@color/primary"-->
-<!--                app:tabMode="fixed"-->
-<!--                app:tabIndicatorHeight="4dp" />-->
-
             <!-- Product Info -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,15 +119,6 @@
                     android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"/>
 
-                <!-- Description Section -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Mô tả sản phẩm"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvDescription"
@@ -153,7 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="#E6E0E0"
+                    android:background="@drawable/bg_rounded_shadow"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:outlineSpotShadowColor="#8AB9DE"
@@ -173,7 +154,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:background="#E6E0E0">
+                        android:background="@color/white">
 
                         <TextView
                             android:id="@+id/tvShopName"
@@ -183,7 +164,7 @@
                             android:textSize="16sp"
                             android:textStyle="bold"
                             tools:text="Shop Thời Trang"
-                            android:background="#E6E0E0"/>
+                            android:background="@color/white"/>
 
                         <TextView
                             android:id="@+id/tvShopLocation"
@@ -192,14 +173,14 @@
                             android:textColor="#757575"
                             android:textSize="14sp"
                             tools:text="Hà Nội"
-                            android:background="#E6E0E0"/>
+                            android:background="@color/white"/>
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnViewShop"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="32dp"
                         android:text="Xem Shop"
                         android:textColor="@color/primary"
                         android:textSize="10sp"
