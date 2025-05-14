@@ -28,7 +28,7 @@ class AccountViewModel : ViewModel() {
         loadOrders()
     }
 
-    private fun loadUserInfo() {
+     fun loadUserInfo() {
         viewModelScope.launch {
             userRepository.getCurrentUserInfo().onSuccess { user ->
                 _user.value = user
@@ -38,7 +38,7 @@ class AccountViewModel : ViewModel() {
         }
     }
 
-    private fun loadOrders() {
+     fun loadOrders() {
         viewModelScope.launch {
             val userId = userRepository.getCurrentUserId() ?: return@launch
             orderRepository.getOrdersByUserId(userId).onSuccess { orders ->

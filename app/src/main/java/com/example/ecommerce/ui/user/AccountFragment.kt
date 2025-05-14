@@ -103,6 +103,10 @@ class AccountFragment : Fragment() {
             })
         }
 
+        binding.layoutRefesh.setOnClickListener {
+            viewModel.loadUserInfo()
+        }
+
         binding.layoutSettings.setOnClickListener {
             startActivity(Intent(requireContext(), EditAccountActivity::class.java))
         }
@@ -111,6 +115,7 @@ class AccountFragment : Fragment() {
             viewModel.logout()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
+
     }
 
     override fun onDestroyView() {
