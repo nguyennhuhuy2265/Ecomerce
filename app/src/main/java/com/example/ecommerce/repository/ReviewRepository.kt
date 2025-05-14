@@ -22,4 +22,15 @@ class ReviewRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun addReview(review: Review): Result<Unit> {
+        return try {
+            db.collection("reviews")
+                .add(review)
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

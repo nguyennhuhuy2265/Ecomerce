@@ -126,13 +126,13 @@ class OrderDetailActivity : AppCompatActivity() {
         }
 
         binding.btnRateProduct.setOnClickListener {
-//            viewModel.order.value?.let { order ->
-//                val intent = Intent(this, ReviewActivity::class.java).apply {
-//                    putExtra("orderId", order.id)
-//                    putExtra("productId", order.productId)
-//                }
-//                startActivity(intent)
-//            }
+            viewModel.order.value?.let { order ->
+                val intent = Intent(this, ReviewActivity::class.java).apply {
+                    putExtra("orderId", order.id)
+                    putExtra("productId", order.productId)
+                }
+                startActivity(intent)
+            }
         }
     }
 }

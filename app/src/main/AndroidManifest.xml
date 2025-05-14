@@ -98,6 +98,8 @@
         <activity android:name=".ui.user.OrderDetailActivity"
             android:exported="false"/>
 
+        <activity android:name=".ui.user.ReviewActivity"
+            android:exported="false"/>
 
 
     </application>

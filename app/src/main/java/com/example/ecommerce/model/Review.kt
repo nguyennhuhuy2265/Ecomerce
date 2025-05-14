@@ -10,5 +10,6 @@ data class Review(
     val userAvatarUrl: String? = null,
     val rating: Int = 0,
     val comment: String? = null,
+    val imageUrls: List<String> = listOf(),
     val createdAt: Timestamp? = null
 )
