@@ -108,6 +108,7 @@ dependencies {
 
     // Firestore
     implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
 
     // Glide để hiển thị ảnh nếu muốn
     implementation ("com.github.bumptech.glide:glide:4.12.0")

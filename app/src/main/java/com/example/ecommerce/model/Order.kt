@@ -18,7 +18,6 @@ data class Order(
     val shippingAddress: Address? = null,
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp? = null
-
 )
 
 enum class OrderStatus {
