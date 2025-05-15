@@ -103,6 +103,9 @@
 
         <activity android:name=".ui.user.ShopDetailActivity"
             android:exported="false"/>
+        
+        <activity android:name=".ui.seller.ManageReviewActivity"
+            android:exported="false"/>
 
     </application>
 

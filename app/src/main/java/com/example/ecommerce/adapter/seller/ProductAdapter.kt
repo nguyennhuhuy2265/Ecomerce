@@ -1,5 +1,6 @@
 package com.example.ecommerce.adapter.seller
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.ecommerce.databinding.SellerItemProductBinding
 import com.example.ecommerce.model.Product
+import com.example.ecommerce.ui.seller.ManageReviewActivity
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -36,6 +38,12 @@ class ProductAdapter(
                 .into(binding.ivProductImage)
             binding.btnEditProduct.setOnClickListener { onEdit(product) }
             binding.btnDeleteProduct.setOnClickListener { onDelete(product) }
+            binding.btnReviewProduct.setOnClickListener {
+                val intent = Intent(binding.root.context, ManageReviewActivity::class.java).apply {
+                    putExtra("product", product)
+                }
+                binding.root.context.startActivity(intent)
+            }
         }
     }
 
