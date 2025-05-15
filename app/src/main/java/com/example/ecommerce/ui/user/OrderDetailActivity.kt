@@ -94,7 +94,7 @@ class OrderDetailActivity : AppCompatActivity() {
                     .into(binding.ivProductImage)
 
                 // Shipping Address
-                binding.tvReceiverName.text = viewModel.user.value?.name ?: "Không có tên"
+                binding.tvReceiverName.text = viewModel.user.value?.name ?: "Nguyen Nhu Huy"
                 binding.tvReceiverPhone.text =
                     it.shippingAddress?.phoneNumber ?: "Không có số điện thoại"
                 binding.tvShippingAddress.text = it.shippingAddress?.let { address ->

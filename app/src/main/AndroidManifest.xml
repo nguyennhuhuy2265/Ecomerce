@@ -101,6 +101,8 @@
         <activity android:name=".ui.user.ReviewActivity"
             android:exported="false"/>
 
+        <activity android:name=".ui.user.ShopDetailActivity"
+            android:exported="false"/>
 
     </application>
 

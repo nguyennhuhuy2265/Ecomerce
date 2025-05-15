@@ -45,7 +45,6 @@ class UserMainActivity : AppCompatActivity() {
         with(binding.topBarUser) {
             etSearch.setOnClickListener { startActivity(Intent(this@UserMainActivity, SearchActivity::class.java)) }
             flCart.setOnClickListener { startActivity(Intent(this@UserMainActivity, CartActivity::class.java)) }
-            flChat.setOnClickListener { startActivity(Intent(this@UserMainActivity, ChatActivity::class.java)) }
         }
 
         // Mặc định mở tab Home khi khởi động

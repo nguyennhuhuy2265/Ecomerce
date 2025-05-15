@@ -180,7 +180,7 @@
                         android:id="@+id/btnViewShop"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="36dp"
                         android:text="Xem Shop"
                         android:textColor="@color/primary"
                         android:textSize="10sp"
@@ -271,38 +271,20 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <LinearLayout
-            android:id="@+id/layoutChat"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/btnChat"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@null"
-                android:contentDescription="Chat"
-                android:src="@drawable/ic_chat" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Chat"
-                android:textSize="12sp" />
-        </LinearLayout>
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddToCart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/primary"
+            android:layout_height="48dp"
+            android:layout_marginStart="50dp"
             android:text="Thêm vào giỏ hàng"
-            android:textColor="@color/white" />
+            android:textColor="@color/primary"
+            android:backgroundTint="@android:color/white"
+            app:cornerRadius="24dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="2dp" />
+
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBuyNow"

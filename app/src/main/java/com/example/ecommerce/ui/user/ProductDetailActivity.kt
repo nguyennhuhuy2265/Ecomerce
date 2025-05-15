@@ -119,16 +119,21 @@ class ProductDetailActivity : AppCompatActivity() {
         }
 
         binding.btnViewShop.setOnClickListener {
-            Toast.makeText(this, "Xem Shop", Toast.LENGTH_SHORT).show()
+            val sellerId = viewModel.product.value?.sellerId
+            if (sellerId != null) {
+                val intent = Intent(this, ShopDetailActivity::class.java).apply {
+                    putExtra("sellerId", sellerId)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Không tìm thấy shop", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.tvSeeAllReviews.setOnClickListener {
-            Toast.makeText(this, "Xem tất cả đánh giá", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Đã hiển thị tất cả đánh giá", Toast.LENGTH_SHORT).show()
         }
 
-        binding.btnChat.setOnClickListener {
-            Toast.makeText(this, "Chat với Shop", Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

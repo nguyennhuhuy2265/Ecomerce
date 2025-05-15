@@ -62,6 +62,7 @@ class CheckoutActivity : AppCompatActivity() {
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false) // Ẩn tiêu đề mặc định của ActionBar
         binding.toolbar.setNavigationOnClickListener { finish() }
     }
 

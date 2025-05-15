@@ -63,6 +63,8 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
             finish()
         }
+
+        binding.btnFacebookLogin.setOnClickListener { Toast.makeText(this, "Tính năng đang trong quá trình phát triển", Toast.LENGTH_SHORT).show() }
     }
 
     private fun setupObservers() {
@@ -112,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

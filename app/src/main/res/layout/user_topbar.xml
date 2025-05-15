@@ -94,35 +94,35 @@
         </FrameLayout>
 
         <!-- Nút tin nhắn -->
-        <FrameLayout
-            android:id="@+id/flChat"
-            android:layout_width="48dp"
-            android:layout_height="48dp">
+<!--        <FrameLayout-->
+<!--            android:id="@+id/flChat"-->
+<!--            android:layout_width="48dp"-->
+<!--            android:layout_height="48dp">-->
 
-            <ImageView
-                android:id="@+id/imgChat"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_chat"
-                app:tint="@color/primary_dark" />
+<!--            <ImageView-->
+<!--                android:id="@+id/imgChat"-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:src="@drawable/ic_chat"-->
+<!--                app:tint="@color/primary_dark" />-->
 
-            <!-- Badge số lượng tin nhắn mới -->
-            <TextView
-                android:id="@+id/tvChatBadge"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/badge_circle_background"
-                android:gravity="center"
-                android:text="0"
-                android:textColor="@color/white"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-        </FrameLayout>
+<!--            &lt;!&ndash; Badge số lượng tin nhắn mới &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:id="@+id/tvChatBadge"-->
+<!--                android:layout_width="16dp"-->
+<!--                android:layout_height="16dp"-->
+<!--                android:layout_gravity="top|end"-->
+<!--                android:layout_marginTop="6dp"-->
+<!--                android:layout_marginEnd="6dp"-->
+<!--                android:background="@drawable/badge_circle_background"-->
+<!--                android:gravity="center"-->
+<!--                android:text="0"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="10sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:visibility="gone" />-->
+<!--        </FrameLayout>-->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

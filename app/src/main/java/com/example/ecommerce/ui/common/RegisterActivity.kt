@@ -65,6 +65,7 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.btnSignUp.setOnClickListener { handleSignUp() }
         binding.tvSignIn.setOnClickListener { startActivity(Intent(this, LoginActivity::class.java)) }
+        binding.btnFacebookRegister.setOnClickListener { Toast.makeText(this, "Tính năng đang trong quá trình phát triển", Toast.LENGTH_SHORT).show() }
     }
 
     private fun setupObservers() {
