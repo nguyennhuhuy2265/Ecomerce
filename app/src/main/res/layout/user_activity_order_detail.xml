@@ -454,6 +454,21 @@
                     app:cornerRadius="8dp"
                     tools:visibility="visible" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRated"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#A2A2A2"
+                    android:padding="12dp"
+                    android:text="Bạn đã đánh giá sản phẩm này rồi"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:enabled="false"
+                    android:visibility="gone"
+                    app:cornerRadius="8dp"
+                    tools:visibility="visible" />
+
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

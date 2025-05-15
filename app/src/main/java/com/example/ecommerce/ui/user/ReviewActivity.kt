@@ -18,39 +18,36 @@ import com.example.ecommerce.R
 import com.example.ecommerce.adapter.user.ImageAdapter
 import com.example.ecommerce.databinding.UserActivityReviewBinding
 import com.example.ecommerce.model.Order
-import com.example.ecommerce.model.Review
 import com.example.ecommerce.repository.OrderRepository
-import com.example.ecommerce.repository.ReviewRepository
 import com.example.ecommerce.repository.common.ImageUploadRepository
 import com.example.ecommerce.repository.common.UploadStatus
-import com.example.ecommerce.repository.common.UserRepository
 import com.example.ecommerce.viewmodel.common.ImageUploadViewModel
-import com.google.firebase.Timestamp
+import com.example.ecommerce.viewmodel.user.ReviewViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
 
 class ReviewActivity : AppCompatActivity() {
 
     private lateinit var binding: UserActivityReviewBinding
-    private lateinit var viewModel: ImageUploadViewModel
-    private val userRepo = UserRepository()
-    private val reviewRepo = ReviewRepository()
+    private lateinit var imageUploadViewModel: ImageUploadViewModel
+    private lateinit var reviewViewModel: ReviewViewModel
     private lateinit var imageRepo: ImageUploadRepository
     private val scope = CoroutineScope(Dispatchers.Main)
     private var order: Order? = null
-    private val imageAdapter = ImageAdapter() // Lưu URI tạm thời trước khi upload
+    private val imageAdapter = ImageAdapter()
     private var tempDocumentId: String? = null
+    private val uploadedImageUrls = mutableListOf<String>()
+    private var uploadCount = 0
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
             val imageUri: Uri? = data?.data
             imageUri?.let { uri ->
-                imageAdapter.addImage(uri.toString()) // Lưu URI tạm thời
+                imageAdapter.addImage(uri.toString())
             }
         }
     }
@@ -60,18 +57,17 @@ class ReviewActivity : AppCompatActivity() {
         binding = UserActivityReviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Khởi tạo imageRepo sau khi application đã sẵn sàng
         imageRepo = ImageUploadRepository(
             (application as com.example.ecommerce.config.MyApp).cloudinary,
             FirebaseFirestore.getInstance()
         )
-        viewModel = ViewModelProvider(this, ImageUploadViewModel.Factory(imageRepo)).get(ImageUploadViewModel::class.java)
+        imageUploadViewModel = ViewModelProvider(this, ImageUploadViewModel.Factory(imageRepo)).get(ImageUploadViewModel::class.java)
+        reviewViewModel = ViewModelProvider(this).get(ReviewViewModel::class.java)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Lấy dữ liệu order
         val orderId = intent.getStringExtra("orderId")
         order = orderId?.let { id ->
             runBlocking {
@@ -79,19 +75,19 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
-        // Hiển thị thông tin sản phẩm
         order?.let {
             Glide.with(this).load(it.productImage).into(binding.imgProduct)
             binding.tvProductName.text = it.productName
             binding.tvProductOptions.text = if (it.selectedOptions.isNotEmpty()) "Phân loại: ${it.selectedOptions.joinToString()}" else "Không có thông tin phân loại"
             binding.tvProductPrice.text = "đ${it.unitPrice}"
+        } ?: run {
+            Toast.makeText(this, "Không tìm thấy đơn hàng", Toast.LENGTH_SHORT).show()
+            finish()
         }
 
-        // Cấu hình RecyclerView
         binding.rvImages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvImages.adapter = imageAdapter
 
-        // Xử lý thêm ảnh
         binding.tvImagesLabel.setOnClickListener {
             if (imageAdapter.itemCount >= 5) {
                 Toast.makeText(this, "Bạn chỉ có thể thêm tối đa 5 ảnh", Toast.LENGTH_SHORT).show()
@@ -104,84 +100,61 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
-        // Xử lý upload ảnh (không cần observe trực tiếp, xử lý khi submit)
-        viewModel.uploadStatus.observe(this) { status ->
-            when (status) {
-                is UploadStatus.Success -> {
-                    // Không cần cập nhật ngay, xử lý khi submit
-                }
-                is UploadStatus.Error -> {
-                    Toast.makeText(this, status.message, Toast.LENGTH_SHORT).show()
-                }
-                is UploadStatus.Loading -> {
-                    // Có thể thêm UI loading nếu cần
+        binding.btnBack.setOnClickListener { onBackPressed() }
+
+        binding.btnSubmitReview.setOnClickListener {
+            scope.launch {
+                val rating = binding.ratingBar.rating.toInt()
+                val comment = binding.etComment.text.toString()
+                val imageUris = imageAdapter.getImageUris()
+
+                uploadedImageUrls.clear()
+                uploadCount = 0
+
+                if (imageUris.isEmpty()) {
+                    tempDocumentId = FirebaseFirestore.getInstance().collection("reviews").document().id
+                    order?.let {
+                        reviewViewModel.submitReview(tempDocumentId!!, it.productId, rating, comment, emptyList())
+                    }
+                } else {
+                    tempDocumentId = FirebaseFirestore.getInstance().collection("reviews").document().id
+                    imageUris.forEach { uri ->
+                        val filePath = getRealPathFromURI(Uri.parse(uri)) ?: uri
+                        imageUploadViewModel.uploadImage(filePath, "reviews", tempDocumentId!!)
+                    }
+
+                    imageUploadViewModel.uploadStatus.observe(this@ReviewActivity) { status ->
+                        when (status) {
+                            is UploadStatus.Success -> {
+                                uploadedImageUrls.addAll(status.imageUrls)
+                                uploadCount++
+                                if (uploadCount == imageUris.size) {
+                                    order?.let {
+                                        reviewViewModel.submitReview(tempDocumentId!!, it.productId, rating, comment, uploadedImageUrls)
+                                    }
+                                }
+                            }
+                            is UploadStatus.Error -> {
+                                Toast.makeText(this@ReviewActivity, status.message, Toast.LENGTH_SHORT).show()
+                            }
+                            is UploadStatus.Loading -> {}
+                        }
+                    }
                 }
             }
         }
 
-        // Xử lý nút back
-        binding.btnBack.setOnClickListener { onBackPressed() }
-
-        // Xử lý gửi đánh giá
-        binding.btnSubmitReview.setOnClickListener {
-            scope.launch {
-                val user = userRepo.getCurrentUserInfo().getOrNull()
-                val rating = binding.ratingBar.rating.toInt()
-                val comment = binding.etComment.text.toString()
-                val imageUris = imageAdapter.getImageUris() // Lấy danh sách URI tạm thời
-
-                if (rating == 0) {
-                    Toast.makeText(this@ReviewActivity, "Vui lòng chọn số sao đánh giá", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-
-                // Tạo document ID khi submit
-                val reviewId = FirebaseFirestore.getInstance().collection("reviews").document().id
-                val uploadedImageUrls = mutableListOf<String>()
-
-                // Upload ảnh và lấy URL
-                imageUris.forEach { uri ->
-                    val filePath = getRealPathFromURI(Uri.parse(uri)) ?: uri
-                    viewModel.uploadImage(filePath, "reviews", reviewId)
-                    viewModel.uploadStatus.observeForever { status ->
-                        if (status is UploadStatus.Success) {
-                            uploadedImageUrls.addAll(status.imageUrls)
-                        }
-                    }
-                }
-
-                // Chờ upload hoàn tất (cách này không lý tưởng, cần cải tiến với LiveData hoặc Job)
-                while (uploadedImageUrls.size < imageUris.size) {
-                    // Chờ một chút (có thể gây deadlock, nên dùng Job hoặc Flow)
-                    kotlinx.coroutines.delay(500)
-                }
-
-                val review = Review(
-                    productId = order?.productId ?: "",
-                    userId = user?.id ?: "",
-                    userName = user?.name,
-                    userAvatarUrl = user?.avatarUrl,
-                    rating = rating,
-                    comment = comment.takeIf { it.isNotBlank() },
-                    imageUrls = uploadedImageUrls,
-                    createdAt = Timestamp.now()
-                )
-
-                reviewRepo.getReviewsByProductId(order?.productId ?: "").onSuccess { reviews ->
-                    if (reviews.none { it.userId == user?.id }) {
-                        reviewRepo.addReview(review).onSuccess {
-                            Toast.makeText(this@ReviewActivity, "Gửi đánh giá thành công", Toast.LENGTH_SHORT).show()
-                            finish()
-                        }.onFailure {
-                            Toast.makeText(this@ReviewActivity, "Lỗi khi lưu đánh giá: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(this@ReviewActivity, "Bạn đã đánh giá sản phẩm này rồi", Toast.LENGTH_SHORT).show()
-                    }
-                }.onFailure {
-                    Toast.makeText(this@ReviewActivity, "Lỗi khi kiểm tra đánh giá: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
+        reviewViewModel.submitResult.observe(this) { result ->
+            result.onSuccess {
+                Toast.makeText(this, "Gửi đánh giá thành công", Toast.LENGTH_SHORT).show()
+                finish()
+            }.onFailure {
+                Toast.makeText(this, "Lỗi: ${it.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        reviewViewModel.error.observe(this) { error ->
+            error?.let { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
         }
     }
 

@@ -186,7 +186,7 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/user_item_review_image"
                 android:background="@drawable/bg_edit_text"
-                android:padding="10dp"/>
+            />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -26,7 +26,8 @@ class ReviewRepository {
     suspend fun addReview(review: Review): Result<Unit> {
         return try {
             db.collection("reviews")
-                .add(review)
+                .document(review.id)
+                .set(review)
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {

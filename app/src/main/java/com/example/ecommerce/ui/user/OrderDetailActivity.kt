@@ -46,6 +46,7 @@ class OrderDetailActivity : AppCompatActivity() {
                 onBackPressed() // Quay lại activity trước đó
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -65,19 +66,26 @@ class OrderDetailActivity : AppCompatActivity() {
                     OrderStatus.DELIVERED -> "Hoàn thành"
                     OrderStatus.CANCELED -> "Đã hủy"
                 }
-                binding.tvOrderStatus.backgroundTintList = ContextCompat.getColorStateList(this, when (it.status) {
-                    OrderStatus.PENDING -> android.R.color.holo_orange_dark
-                    OrderStatus.CONFIRMED -> android.R.color.holo_blue_dark
-                    OrderStatus.SHIPPING -> android.R.color.holo_green_dark
-                    OrderStatus.DELIVERED -> android.R.color.holo_green_dark
-                    OrderStatus.CANCELED -> android.R.color.holo_red_dark
-                })
-                binding.tvPaymentStatus.text = if (it.paymentStatus == com.example.ecommerce.model.PaymentStatus.PAID) "Đã thanh toán" else "Chưa thanh toán"
-                binding.tvPaymentStatus.backgroundTintList = ContextCompat.getColorStateList(this, if (it.paymentStatus == com.example.ecommerce.model.PaymentStatus.PAID) android.R.color.holo_green_dark else android.R.color.holo_orange_dark)
+                binding.tvOrderStatus.backgroundTintList = ContextCompat.getColorStateList(
+                    this, when (it.status) {
+                        OrderStatus.PENDING -> android.R.color.holo_orange_dark
+                        OrderStatus.CONFIRMED -> android.R.color.holo_blue_dark
+                        OrderStatus.SHIPPING -> android.R.color.holo_green_dark
+                        OrderStatus.DELIVERED -> android.R.color.holo_green_dark
+                        OrderStatus.CANCELED -> android.R.color.holo_red_dark
+                    }
+                )
+                binding.tvPaymentStatus.text =
+                    if (it.paymentStatus == com.example.ecommerce.model.PaymentStatus.PAID) "Đã thanh toán" else "Chưa thanh toán"
+                binding.tvPaymentStatus.backgroundTintList = ContextCompat.getColorStateList(
+                    this,
+                    if (it.paymentStatus == com.example.ecommerce.model.PaymentStatus.PAID) android.R.color.holo_green_dark else android.R.color.holo_orange_dark
+                )
 
                 // Product Info
                 binding.tvProductName.text = it.productName
-                binding.tvProductOptions.text = if (it.selectedOptions.isNotEmpty()) "Phân loại: ${it.selectedOptions.joinToString()}" else "Không có phân loại"
+                binding.tvProductOptions.text =
+                    if (it.selectedOptions.isNotEmpty()) "Phân loại: ${it.selectedOptions.joinToString()}" else "Không có phân loại"
                 binding.tvUnitPrice.text = "₫${it.unitPrice.toInt()}"
                 binding.tvQuantity.text = "x${it.quantity}"
                 Glide.with(this)
@@ -87,7 +95,8 @@ class OrderDetailActivity : AppCompatActivity() {
 
                 // Shipping Address
                 binding.tvReceiverName.text = viewModel.user.value?.name ?: "Không có tên"
-                binding.tvReceiverPhone.text = it.shippingAddress?.phoneNumber ?: "Không có số điện thoại"
+                binding.tvReceiverPhone.text =
+                    it.shippingAddress?.phoneNumber ?: "Không có số điện thoại"
                 binding.tvShippingAddress.text = it.shippingAddress?.let { address ->
                     "${address.streetNumber} ${address.streetName}, ${address.ward}, ${address.district}, ${address.city}"
                 } ?: "Không có địa chỉ"
@@ -99,19 +108,33 @@ class OrderDetailActivity : AppCompatActivity() {
                 binding.tvShippingFee.text = "₫${shippingFee.toInt()}"
                 binding.tvTotalAmount.text = "₫${it.totalAmount.toInt()}"
 
-                // Action Buttons
+// Action Buttons
                 when (it.status) {
                     OrderStatus.PENDING, OrderStatus.CONFIRMED -> {
                         binding.btnCancelOrder.visibility = View.VISIBLE
                         binding.btnRateProduct.visibility = View.GONE
+                        binding.btnRated.visibility = View.GONE
                     }
+
                     OrderStatus.DELIVERED -> {
-                        binding.btnCancelOrder.visibility = View.GONE
-                        binding.btnRateProduct.visibility = View.VISIBLE
+                        // Kiểm tra xem đã đánh giá chưa
+                        viewModel.hasReviewed.observe(this) { hasReviewed ->
+                            if (hasReviewed) {
+                                binding.btnCancelOrder.visibility = View.GONE
+                                binding.btnRateProduct.visibility = View.GONE
+                                binding.btnRated.visibility = View.VISIBLE
+                            } else {
+                                binding.btnCancelOrder.visibility = View.GONE
+                                binding.btnRated.visibility = View.GONE
+                                binding.btnRateProduct.visibility = View.VISIBLE
+                            }
+                        }
                     }
+
                     else -> {
                         binding.btnCancelOrder.visibility = View.GONE
                         binding.btnRateProduct.visibility = View.GONE
+                        binding.btnRated.visibility = View.GONE
                     }
                 }
             }
