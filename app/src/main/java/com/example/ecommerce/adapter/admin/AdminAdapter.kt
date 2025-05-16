@@ -1,20 +1,22 @@
 package com.example.ecommerce.adapter.admin
 
-import android.content.Intent
-import com.example.ecommerce.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ecommerce.R
 import com.example.ecommerce.model.User
-import com.example.ecommerce.ui.admin.AdminSellerProductsActivity
 
 class AdminAdapter(
     private val onRoleChange: (String, String) -> Unit,
-    private val onDelete: (String) -> Unit
+    private val onDelete: (String) -> Unit,
+    private val onSellerClick: (User) -> Unit
 ) : ListAdapter<User, AdminAdapter.AdminViewHolder>(UserDiffCallback()) {
 
     class AdminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,9 +37,8 @@ class AdminAdapter(
         val user = getItem(position)
         holder.nameTextView.text = user.name
         holder.emailTextView.text = user.email
-        holder.phoneTextView.text = user.phoneNumber
+        holder.phoneTextView.text = user.phoneNumber ?: "Không có số"
 
-        // Thiết lập AutoCompleteTextView cho vai trò
         val roles = arrayOf("seller", "user")
         val adapter = ArrayAdapter(
             holder.itemView.context,
@@ -46,11 +47,9 @@ class AdminAdapter(
         )
         holder.roleAutoComplete.setAdapter(adapter)
 
-        // Chọn vai trò hiện tại
         val roleIndex = roles.indexOf(user.role).takeIf { it >= 0 } ?: 0
         holder.roleAutoComplete.setText(roles[roleIndex], false)
 
-        // Xử lý thay đổi vai trò
         holder.roleAutoComplete.setOnItemClickListener { _, _, pos, _ ->
             val newRole = roles[pos]
             if (newRole != user.role) {
@@ -58,19 +57,13 @@ class AdminAdapter(
             }
         }
 
-        // Xử lý xóa người dùng
         holder.deleteButton.setOnClickListener {
             onDelete(user.id)
         }
 
-        // Xử lý nhấn vào mục người dùng có role = seller
         if (user.role == "seller") {
             holder.itemView.setOnClickListener {
-                val intent = Intent(holder.itemView.context, AdminSellerProductsActivity::class.java).apply {
-                    putExtra("SELLER_ID", user.id)
-                    putExtra("SELLER_NAME", user.name)
-                }
-                holder.itemView.context.startActivity(intent)
+                onSellerClick(user)
             }
         } else {
             holder.itemView.setOnClickListener(null)

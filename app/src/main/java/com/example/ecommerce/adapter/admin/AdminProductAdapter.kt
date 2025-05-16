@@ -37,8 +37,8 @@ class AdminProductAdapter(
         holder.nameTextView.text = product.name
         holder.descriptionTextView.text = product.description
         holder.priceTextView.text = "${product.price} VND"
-        holder.stockTextView.text = "Tồn kho: ${product.stock}"
-        holder.ratingTextView.text = "Đánh giá: ${product.rating} (${product.reviewCount} lượt)"
+        holder.stockTextView.text = "Kho: ${product.stock}"
+        holder.ratingTextView.text = "⭐ ${product.rating}"
 
         // Hiển thị ảnh đầu tiên từ imageUrls
         if (product.imageUrls.isNotEmpty()) {
