@@ -81,7 +81,7 @@ class ProductDetailActivity : AppCompatActivity() {
         viewModel.reviews.observe(this) { reviews ->
             reviewAdapter.submitList(reviews)
             val avgRating = reviews.map { it.rating }.average().toString().take(3)
-            binding.tvAverageRating.text = avgRating
+            binding.tvAverageRating.text = avgRating ?: "5"
             binding.tvReviewCount.text = "${reviews.size} đánh giá"
         }
 

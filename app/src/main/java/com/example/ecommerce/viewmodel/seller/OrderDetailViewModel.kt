@@ -57,7 +57,7 @@ class OrderDetailViewModel : ViewModel() {
                         // Lên lịch Worker chạy sau 5 giây (trong thực tế có thể là 1 ngày)
                         val workRequest = OneTimeWorkRequestBuilder<OrderStatusWorker>()
                             .setInputData(workData)
-                            .setInitialDelay(5, TimeUnit.SECONDS) // 5 giây để demo, có thể đổi thành 1 ngày
+                            .setInitialDelay(10, TimeUnit.SECONDS) // 5 giây để demo, có thể đổi thành 1 ngày
                             .build()
 
                         WorkManager.getInstance()

@@ -179,7 +179,7 @@ class CheckoutActivity : AppCompatActivity() {
             val paymentStatus = if (binding.rgPaymentMethods.checkedRadioButtonId == R.id.rbCashOnDelivery) {
                 PaymentStatus.PENDING
             } else {
-                PaymentStatus.PAID
+                PaymentStatus.PENDING
             }
 
             val address = if (binding.layoutExistingAddress.visibility == View.VISIBLE) {
